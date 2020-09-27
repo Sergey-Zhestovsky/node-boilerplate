@@ -7,9 +7,10 @@ const moment = require('moment');
 const DailyRotateFile = require('winston-daily-rotate-file');
 const singleton = require('../utils/singleton');
 
+const LOG_PATH = path.join(__dirname, '../../logs');
+
 class Logger {
-  constructor(logPath) {
-    console.log('logger builded');
+  constructor(logPath = LOG_PATH) {
     this.winston = Logger.buildLogger({ logPath });
   }
 
@@ -96,6 +97,18 @@ class Logger {
     return new winston.transports.Console({
       format: winston.format.combine(winston.format.printf(assembleLogOutput), winston.format.colorize({ all: true })),
     });
+  }
+
+  static get middlewareOutput() {
+    return 'PATH::url [:method] :: status::status :: size::res[content-length] :: :response-time ms';
+  }
+
+  stream() {
+    return {
+      write: (message, encoding) => {
+        this.info(message.replace(/\n/g, ''));
+      },
+    };
   }
 
   error(message, ...args) {
