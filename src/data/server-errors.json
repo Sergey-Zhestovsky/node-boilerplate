@@ -1,0 +1,8 @@
+{
+  "VALIDATION__ERROR": {
+    "code": "001",
+    "status": "400",
+    "name": "Validation error",
+    "message": "Bad request."
+  }
+}
