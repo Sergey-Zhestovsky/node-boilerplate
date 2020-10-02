@@ -3,7 +3,8 @@ require('dotenv').config();
 const http = require('http');
 const express = require('express');
 const Logger = require('./libs/Logger');
-const { entry, api, errorHandler } = require('./middleware');
+const { api } = require('./services');
+const { entry, errorHandler } = require('./middleware');
 
 const logger = new Logger();
 const app = express();

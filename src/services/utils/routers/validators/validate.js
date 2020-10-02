@@ -1,5 +1,5 @@
-const Validator = require('../../../../api/services/validator');
-const ServerError = require('../../../../libs/ServerError');
+const Validator = require('../../../../api/validator');
+const { Client400Error } = require('../../../../libs/ClientError');
 
 const validate = (requestProperty, errorMessage = (error) => error) => {
   return (schema, validationConfig, replaceBody = false) => {
@@ -8,7 +8,7 @@ const validate = (requestProperty, errorMessage = (error) => error) => {
 
     return (req, res, next) => {
       const { value, error } = validator.validate(req[requestProperty]);
-      if (error) return next(ServerError.create(ServerError.Errors.VALIDATION__ERROR, errorMessage(error)));
+      if (error) return next(new Client400Error(errorMessage(error)));
       if (replaceBody) req.body = value;
       return next();
     };

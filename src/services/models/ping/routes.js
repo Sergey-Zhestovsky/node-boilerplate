@@ -1,4 +1,4 @@
-const { Router } = require('express');
+const Router = require('../../utils/routers/router');
 const { pingController } = require('./controllers');
 const { validateQuery } = require('../../utils/routers/validators');
 
@@ -12,7 +12,7 @@ router.get(
     }),
     { required: false }
   ),
-  (req, res) => {
+  async (req, res) => {
     const query = req.query;
     const result = pingController(query.withTime);
     return res.status(200).send(result);
