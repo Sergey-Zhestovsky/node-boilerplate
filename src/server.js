@@ -1,18 +1,20 @@
 require('dotenv').config();
 
 const http = require('http');
-const express = require('express');
+const app = require('./express');
 const Logger = require('./libs/Logger');
-const { api } = require('./services');
-const { entry, errorHandler } = require('./middleware');
 
 const logger = new Logger();
-const app = express();
 
-app.use(entry);
-app.use(api);
-app.use(errorHandler);
+const main = async (process) => {
+  const server = http.createServer(app);
+  const port = process.env.PORT || 3000;
+  const host = process.env.HOST || 'localhost';
 
-const server = http.createServer(app);
-const port = process.env.PORT || 3000;
-server.listen(port, () => logger.info(`Server listening on: http://localhost:${port}`));
+  server.listen(port, host, () =>
+    logger.info(`Server in '${process.env.NODE_ENV}' mode listening on: http://${host}:${port}`)
+  );
+};
+
+main(process);
+module.exports = main;

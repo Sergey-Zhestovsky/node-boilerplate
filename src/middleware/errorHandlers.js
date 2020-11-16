@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const { ClientError, Client500Error } = require('../libs/ClientError');
 const ServerError = require('../libs/ServerError');
 const Logger = require('../libs/Logger');
@@ -12,7 +10,7 @@ const client404Error = (req, res, next) => {
 };
 
 const clientError = (error, req, res, next) => {
-  if (error instanceof ClientError) return res.trow(error);
+  if (error instanceof ClientError) return res.throw(error);
   else return next(error);
 };
 
@@ -22,7 +20,7 @@ const serverError = (error, req, res, next) => {
   if (process.env.NODE_ENV === ENVIRONMENT.DEVELOPMENT) {
     return res.status(500).return(null, err.getError());
   } else {
-    return res.trow(new Client500Error());
+    return res.throw(new Client500Error());
   }
 };
 

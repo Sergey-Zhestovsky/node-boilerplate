@@ -11,6 +11,6 @@ const throwMixin = (res, error) => {
 
 module.exports = (req, res) => {
   res.return = (result, error) => sendObjMixin(res, result, error);
-  req.throw = (error) => throwMixin(res, error);
+  res.throw = (error) => throwMixin(res, error);
   return { req, res };
 };

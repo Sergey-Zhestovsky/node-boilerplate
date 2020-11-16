@@ -1,4 +1,3 @@
-require('dotenv').config();
 require('colors');
 
 const path = require('path');

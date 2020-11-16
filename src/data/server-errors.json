@@ -5,7 +5,7 @@
     "name": "Internal server error",
     "message": "Internal server error."
   },
-  "VALIDATION__ERROR": {
+  "VALIDATION_ERROR": {
     "code": "001",
     "status": "400",
     "name": "Validation error",

@@ -1,5 +1,3 @@
-require('dotenv').config();
-
 const crypto = require('crypto');
 const serverErrors = require('../data/server-errors.json');
 

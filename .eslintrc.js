@@ -39,6 +39,5 @@ module.exports = {
     'valid-typeof': [ERROR, { requireStringLiterals: true }],
     'no-var': ERROR,
     'max-len': OFF,
-    //'no-undef': [ERROR, { typeof: true }],
   },
 };
