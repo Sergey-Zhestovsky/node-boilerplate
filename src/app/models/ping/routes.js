@@ -1,6 +1,6 @@
 const Router = require('../../utils/routers/router');
-const { pingController } = require('./controllers');
-const { validateQuery } = require('../../utils/routers/validators');
+const { pingController, healthController } = require('./controllers');
+const { validateQuery, validateBody } = require('../../utils/routers/validators');
 
 const router = Router();
 
@@ -12,11 +12,15 @@ router.get(
     }),
     { required: false }
   ),
-  async (req, res) => {
-    const query = req.query;
+  async ({ query }, res) => {
     const result = pingController(query.withTime);
-    return res.status(200).send(result);
+    return res.status(200).return(result);
   }
 );
+
+router.post('/health-check', validateBody(['withEnv']), async ({ body }, res) => {
+  const result = healthController(body.withEnv);
+  return res.status(200).return(result);
+});
 
 module.exports = Router().use('/ping', router);

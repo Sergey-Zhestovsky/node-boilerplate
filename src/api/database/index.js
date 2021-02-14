@@ -1,4 +1,4 @@
 module.exports = {
   actions: require('./actions'),
-  connection: require('./connection')
+  connection: require('./connection'),
 };

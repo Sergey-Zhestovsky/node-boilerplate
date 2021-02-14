@@ -1,2 +1,5 @@
-// eslint-disable-next-line no-unused-vars
 const ConnectorInterface = require('./utils/ConnectorInterface');
+
+const instance = new ConnectorInterface();
+
+module.exports = instance;

@@ -11,6 +11,7 @@ class Validator {
       abortEarly: false,
       convert: true,
       presence: 'required',
+      allowUnknown: true,
     };
   }
 

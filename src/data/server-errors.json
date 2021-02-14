@@ -10,5 +10,23 @@
     "status": "400",
     "name": "Validation error",
     "message": "Bad request."
+  },
+  "AUTHORIZATION_ERROR": {
+    "code": "002",
+    "status": "401",
+    "name": "Authorization error",
+    "message": "Access denied:  not authorized."
+  },
+  "PRIVILEGE_ERROR": {
+    "code": "003",
+    "status": "403",
+    "name": "Forbidden",
+    "message": "Access denied: wrong privilege."
+  },
+  "NOT_FOUND": {
+    "code": "004",
+    "status": "404",
+    "name": "Validation error",
+    "message": "Bad request."
   }
 }

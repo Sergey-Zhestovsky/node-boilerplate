@@ -1,12 +1,18 @@
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const compression = require('compression');
 const morgan = require('morgan');
-const Logger = require('../libs/Logger');
-const queryMutator = require('./utils/queryMutator');
 
-const logger = new Logger();
+const logger = require('../libs/Logger');
+const queryMutator = require('./utils/queryMutator');
+const env = require('../data/env.json');
+
+const setupCors = (req, res, next) => {
+  if (process.env.NODE_ENV === env.PRODUCTION) return next();
+  return cors();
+};
 
 const mutateQuery = (req, res, next) => {
   queryMutator(req, res);
@@ -14,11 +20,12 @@ const mutateQuery = (req, res, next) => {
 };
 
 module.exports = [
+  setupCors(),
   helmet(),
   bodyParser.urlencoded({ extended: false }),
   bodyParser.json({ limit: '150kb' }),
   cookieParser(),
   compression(),
-  morgan(Logger.middlewareOutput, { stream: logger.stream() }),
+  morgan(logger.middlewareOutput, { stream: logger.stream() }),
   mutateQuery,
 ];

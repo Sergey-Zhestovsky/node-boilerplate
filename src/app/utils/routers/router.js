@@ -3,7 +3,6 @@ const { Router: ExpressRouter } = require('express');
 const handlerWrapper = (handler) => {
   return async (req, res, next) => {
     try {
-      console.log(handler);
       await handler(req, res, next);
     } catch (error) {
       next(error);

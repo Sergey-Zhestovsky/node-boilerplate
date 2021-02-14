@@ -1,16 +1,19 @@
 require('colors');
 
 const path = require('path');
+const debug = require('debug');
 const winston = require('winston');
 const moment = require('moment');
 const DailyRotateFile = require('winston-daily-rotate-file');
-const singleton = require('../utils/singleton');
+
+const env = require('../data/env.json');
 
 const LOG_PATH = path.join(__dirname, '../../logs');
 
 class Logger {
   constructor(logPath = LOG_PATH) {
     this.winston = Logger.buildLogger({ logPath });
+    this.debug = debug('app');
   }
 
   static buildLogger({ logPath, parseArgs = true, logInConsole = true } = {}) {
@@ -23,7 +26,7 @@ class Logger {
       transports.push(Logger.getErrorTransport(logPath));
     }
 
-    if (logInConsole) {
+    if (logInConsole && process.env.NODE_ENV !== env.TEST) {
       transports.push(Logger.getConsoleTransport());
     }
 
@@ -43,7 +46,10 @@ class Logger {
       }`;
     };
 
-    return winston.format.combine(winston.format.timestamp(), winston.format.printf(assembleLogOutput));
+    return winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.printf(assembleLogOutput)
+    );
   }
 
   static getDebugTransport(logPath) {
@@ -94,12 +100,19 @@ class Logger {
     };
 
     return new winston.transports.Console({
-      format: winston.format.combine(winston.format.printf(assembleLogOutput), winston.format.colorize({ all: true })),
+      format: winston.format.combine(
+        winston.format.printf(assembleLogOutput),
+        winston.format.colorize({ all: true })
+      ),
     });
   }
 
-  static get middlewareOutput() {
+  get middlewareOutput() {
     return 'PATH::url [:method] :: status::status :: size::res[content-length] :: :response-time ms';
+  }
+
+  getDebug(namespace) {
+    return this.debug.extend(namespace);
   }
 
   stream() {
@@ -122,13 +135,9 @@ class Logger {
     this.winston.info(message, ...args);
   }
 
-  debug(message, ...args) {
-    this.winston.debug(message, ...args);
-  }
-
   log(level, message) {
     this.winston.log({ level, message });
   }
 }
 
-module.exports = singleton(Logger);
+module.exports = new Logger();

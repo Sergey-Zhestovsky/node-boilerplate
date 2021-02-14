@@ -1,4 +1,4 @@
-const Validator = require('../../../../api/classes/Validator');
+const Validator = require('../../../../libs/Validator');
 const { Client400Error } = require('../../../../libs/ClientError');
 
 const validate = (requestProperty, errorMessage = (error) => error) => {

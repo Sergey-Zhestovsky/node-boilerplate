@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+
 const serverErrors = require('../data/server-errors.json');
 
 class ClientError extends Error {
@@ -7,7 +8,6 @@ class ClientError extends Error {
 
     this.date = new Date().toString();
     this.id = this.createId(code);
-
     this.code = code || '000';
     this.status = status || '500';
     this.name = name || null;
@@ -18,8 +18,10 @@ class ClientError extends Error {
     if (error instanceof ClientError) return error;
     if (error instanceof Error)
       return new ClientError({ name: error.name, message: describe || error.message }, error.stack);
-    if (error instanceof String) return new ClientError({ name: error, message: describe || error });
-    if (error instanceof Object) return new ClientError({ ...error, message: describe || error.message }, error.source);
+    if (error instanceof String)
+      return new ClientError({ name: error, message: describe || error });
+    if (error instanceof Object)
+      return new ClientError({ ...error, message: describe || error.message }, error.source);
 
     return new ClientError({ message: describe }, error);
   }
@@ -52,7 +54,37 @@ class ClientError extends Error {
 
 class Client400Error extends ClientError {
   constructor(message) {
-    const validError = ClientError.Errors.VALIDATION__ERROR;
+    const validError = ClientError.Errors.VALIDATION_ERROR;
+    super({
+      ...validError,
+      message: message || validError.message,
+    });
+  }
+}
+
+class Client401Error extends ClientError {
+  constructor(message) {
+    const validError = ClientError.Errors.AUTHORIZATION_ERROR;
+    super({
+      ...validError,
+      message: message || validError.message,
+    });
+  }
+}
+
+class Client403Error extends ClientError {
+  constructor(message) {
+    const validError = ClientError.Errors.PRIVILEGE_ERROR;
+    super({
+      ...validError,
+      message: message || validError.message,
+    });
+  }
+}
+
+class Client404Error extends ClientError {
+  constructor(message) {
+    const validError = ClientError.Errors.NOT_FOUND;
     super({
       ...validError,
       message: message || validError.message,
@@ -61,13 +93,20 @@ class Client400Error extends ClientError {
 }
 
 class Client500Error extends ClientError {
-  constructor() {
-    super(ClientError.Errors.INTERNAL_SERVER_ERROR);
+  constructor(message) {
+    const validError = ClientError.Errors.INTERNAL_SERVER_ERROR;
+    super({
+      ...validError,
+      message: message || validError.message,
+    });
   }
 }
 
 module.exports = {
   ClientError,
   Client400Error,
+  Client401Error,
+  Client403Error,
+  Client404Error,
   Client500Error,
 };
