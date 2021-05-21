@@ -1,7 +1,8 @@
 const { ClientError, Client500Error } = require('../../libs/ClientError');
 
 const sendObjMixin = (res, result = null, error = null) => {
-  return res.send({ result, error });
+  const isSuccess = !error;
+  return res.send({ result, isSuccess, error });
 };
 
 const throwMixin = (res, error) => {

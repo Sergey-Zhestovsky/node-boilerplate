@@ -9,8 +9,8 @@ const logger = require('../libs/Logger');
 const queryMutator = require('./utils/queryMutator');
 const env = require('../data/env.json');
 
-const setupCors = (req, res, next) => {
-  if (process.env.NODE_ENV === env.PRODUCTION) return next();
+const setupCors = () => {
+  if (process.env.NODE_ENV === env.PRODUCTION) return (req, res, next) => next();
   return cors();
 };
 

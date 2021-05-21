@@ -1,35 +1,25 @@
 const request = require('supertest');
+
 const app = require('../../express');
 
 const BASE_PATH = '/api/v1';
 
-describe('Route /ping', function () {
+describe('Route /health-check', function () {
   describe('/ [GET]', function () {
-    test('responds with json', async () => {
-      const { body, error } = await request(app)
-        .get(BASE_PATH + '/ping')
+    test('simple request', async () => {
+      const { status } = await request(app)
+        .get(BASE_PATH + '/health-check')
         .query();
 
-      expect(body).toBeDefined();
-      expect(error).toBeFalsy();
-    });
-  });
-
-  describe('/health-check [POST]', function () {
-    test('with invalid body', async () => {
-      const { body, error } = await request(app)
-        .post(BASE_PATH + '/ping/health-check')
-        .send({});
-
-      expect(body).toBeDefined();
-      expect(error).toBeTruthy();
+      expect(status).toBe(200);
     });
 
-    test('with valid body', async () => {
-      const { body, error } = await request(app)
-        .post(BASE_PATH + '/ping/health-check')
-        .send({ withEnv: true });
+    test('responds with env', async () => {
+      const { body, status } = await request(app)
+        .get(BASE_PATH + '/health-check')
+        .query({ withEnv: true });
 
+      expect(status).toBe(200);
       expect(body).toEqual(
         expect.objectContaining({
           result: expect.objectContaining({
@@ -37,7 +27,40 @@ describe('Route /ping', function () {
           }),
         })
       );
-      expect(error).toBeFalsy();
+    });
+  });
+
+  describe('/ping [POST]', function () {
+    test('incorrect request', async () => {
+      const { status } = await request(app)
+        .get(BASE_PATH + '/health-check/ping')
+        .query();
+
+      expect(status).toBe(400);
+    });
+
+    test('simple request', async () => {
+      const { body, status } = await request(app)
+        .get(BASE_PATH + '/health-check/ping')
+        .query({ withTime: false });
+
+      expect(status).toBe(200);
+      expect(body.result).toBe('pong');
+    });
+
+    test('with valid body', async () => {
+      const { body, status } = await request(app)
+        .get(BASE_PATH + '/health-check/ping')
+        .query({ withTime: true });
+
+      expect(status).toBe(200);
+      expect(body).toEqual(
+        expect.objectContaining({
+          result: expect.objectContaining({
+            timeStamp: expect.anything(),
+          }),
+        })
+      );
     });
   });
 });

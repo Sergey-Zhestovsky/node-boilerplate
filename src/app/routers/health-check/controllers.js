@@ -1,5 +1,6 @@
 const HealthService = require('../../../services/HealthService');
 const logger = require('../../../libs/Logger');
+const env = require('../../../data/env.json');
 
 const debug = logger.getDebug('controller:ping');
 
@@ -11,6 +12,7 @@ const pingController = (withTime) => {
 
 const healthController = (withEnv) => {
   debug(`Get in healthController with environment: '%s'`, withEnv);
+  if (process.env.NODE_ENV === env.PRODUCTION) withEnv = false;
   const result = HealthService.getServerStatus(withEnv);
   debug(`Get out healthController`);
   return result;

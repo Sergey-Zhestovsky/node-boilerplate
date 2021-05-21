@@ -6,12 +6,10 @@ const winston = require('winston');
 const moment = require('moment');
 const DailyRotateFile = require('winston-daily-rotate-file');
 
-const env = require('../data/env.json');
-
-const LOG_PATH = path.join(__dirname, '../../logs');
+const loggerConfig = require('../config/logger.config');
 
 class Logger {
-  constructor(logPath = LOG_PATH) {
+  constructor(logPath = loggerConfig.logPath) {
     this.winston = Logger.buildLogger({ logPath });
     this.debug = debug('app');
   }
@@ -26,7 +24,7 @@ class Logger {
       transports.push(Logger.getErrorTransport(logPath));
     }
 
-    if (logInConsole && process.env.NODE_ENV !== env.TEST) {
+    if (logInConsole && !loggerConfig.console.blackListModes.includes(process.env.NODE_ENV)) {
       transports.push(Logger.getConsoleTransport());
     }
 
@@ -36,20 +34,28 @@ class Logger {
     });
   }
 
-  static getFormat(parseArgs = true) {
-    const assembleLogOutput = (info) => {
-      const { timestamp, level, message, ...args } = info;
-      const ts = moment(timestamp).format('YYYY-MM-DD HH:mm:ss (Z)');
+  static assembleLogOutput(info, parseArgs = true, getTime) {
+    const { timestamp, level, message, code, stack, ...args } = info;
+    let ts = getTime ? getTime(timestamp, info) : timestamp;
+    let output = message;
 
-      return `[${level}] :: ${ts} :: ${message} ${
-        parseArgs ? (Object.keys(args).length ? JSON.stringify(args, null, 2) : '') : ''
-      }`;
+    if (code) output += `\ncode: ${code}`;
+    if (stack) output += `\n${stack}`;
+    if (parseArgs && Object.keys(args).length) output += `\n ${JSON.stringify(args, null, 2)}`;
+
+    return `[${level}] :: ${ts} :: ${output}`;
+  }
+
+  static getFormat(parseArgs = true) {
+    const timeFormatter = (timestamp) => {
+      return moment(timestamp).format('YYYY-MM-DD HH:mm:ss (Z)');
     };
 
-    return winston.format.combine(
-      winston.format.timestamp(),
-      winston.format.printf(assembleLogOutput)
-    );
+    const printf = (info) => {
+      return Logger.assembleLogOutput(info, parseArgs, timeFormatter);
+    };
+
+    return winston.format.combine(winston.format.timestamp(), winston.format.printf(printf));
   }
 
   static getDebugTransport(logPath) {
@@ -90,18 +96,17 @@ class Logger {
   }
 
   static getConsoleTransport(parseArgs = true) {
-    const assembleLogOutput = (info) => {
-      const { timestamp, level, message, ...args } = info;
-      const ts = moment(timestamp).format('MM.DD.YYYY, HH:mm:ss');
+    const timeFormatter = (timestamp) => {
+      return moment(timestamp).format('MM.DD.YYYY, HH:mm:ss').cyan;
+    };
 
-      return `[${level}] ${ts.cyan} ${message} ${
-        parseArgs ? (Object.keys(args).length ? JSON.stringify(args, null, 2) : '') : ''
-      }`;
+    const printf = (info) => {
+      return Logger.assembleLogOutput(info, parseArgs, timeFormatter);
     };
 
     return new winston.transports.Console({
       format: winston.format.combine(
-        winston.format.printf(assembleLogOutput),
+        winston.format.printf(printf),
         winston.format.colorize({ all: true })
       ),
     });

@@ -4,9 +4,9 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
-    "dev": "set DEBUG=app:* & nodemon -r dotenv/config src/server.js dotenv_config_path=.env.development",
-    "prod": "node -r dotenv/config src/server.js dotenv_config_path=.env.production",
-    "test": "jest --verbose -i"
+    "dev": "set DEBUG=app:* & nodemon src/server.js",
+    "prod": "set NODE_ENV=production & node src/server.js",
+    "test": "jest --verbose --runInBand"
   },
   "keywords": [],
   "author": "",
