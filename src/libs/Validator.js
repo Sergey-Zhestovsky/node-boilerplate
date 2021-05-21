@@ -34,12 +34,8 @@ class Validator {
 
     if (Array.isArray(schema)) {
       let validationSchema = {};
-
-      schema.forEach((setting) => {
-        validationSchema[setting] = Joi.any();
-      });
+      schema.forEach((setting) => (validationSchema[setting] = Joi.any()));
       this.schema = Joi.object(validationSchema);
-
       return this;
     }
 
