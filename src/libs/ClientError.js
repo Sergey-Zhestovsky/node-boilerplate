@@ -1,47 +1,48 @@
-const crypto = require('crypto');
-
 const serverErrors = require('../data/server-errors.json');
 
 class ClientError extends Error {
-  constructor({ code, status, name, message }) {
-    super(name);
+  constructor({ code, type, status, title, message }) {
+    super(title);
 
-    this.date = new Date().toString();
-    this.id = this.createId(code);
-    this.code = code || '000';
-    this.status = status || '500';
-    this.name = name || null;
+    this.code = code || ClientError.Errors.InternalServerError.code;
+    this.type = type || ClientError.Errors.InternalServerError.type;
+    this.status = status || ClientError.Errors.InternalServerError.status;
+    this.title = title || ClientError.Errors.InternalServerError.title;
     this.message = message;
+    this.date = new Date().toISOString();
   }
 
-  static create(error, describe) {
-    if (error instanceof ClientError) return error;
-    if (error instanceof Error)
-      return new ClientError({ name: error.name, message: describe || error.message }, error.stack);
-    if (error instanceof String)
-      return new ClientError({ name: error, message: describe || error });
-    if (error instanceof Object)
-      return new ClientError({ ...error, message: describe || error.message }, error.source);
+  static create(error, description) {
+    if (error instanceof ClientError) {
+      return error;
+    } else if (error instanceof Error) {
+      return new ClientError({ title: error.name, message: description || error.message });
+    } else if (error instanceof String) {
+      return new ClientError({ name: error, message: description || error });
+    } else if (error instanceof Object) {
+      return new ClientError({ ...error, message: description || error.message });
+    }
 
-    return new ClientError({ message: describe }, error);
+    return new ClientError({ message: description });
+  }
+
+  static construct(originErrorObject, override) {
+    let origin = { ...originErrorObject };
+    if (typeof override === 'object') origin = { ...origin, ...override };
+    else if (typeof override === 'string') origin.message = override;
+    return origin;
   }
 
   static get Errors() {
     return serverErrors;
   }
 
-  createId(code = '000') {
-    const hash = crypto.createHash('sha256');
-    const hashDate = hash.update(this.date).digest('hex').slice(-8);
-    return `${code}-${hashDate}`;
-  }
-
   getError() {
     return {
-      id: this.id,
       code: this.code,
+      type: this.type,
       status: this.status,
-      name: this.name,
+      title: this.title,
       message: this.message,
       date: this.date,
     };
@@ -54,51 +55,31 @@ class ClientError extends Error {
 
 class Client400Error extends ClientError {
   constructor(message) {
-    const validError = ClientError.Errors.VALIDATION_ERROR;
-    super({
-      ...validError,
-      message: message || validError.message,
-    });
+    super(ClientError.construct(ClientError.Errors.ValidationError, message));
   }
 }
 
 class Client401Error extends ClientError {
   constructor(message) {
-    const validError = ClientError.Errors.AUTHORIZATION_ERROR;
-    super({
-      ...validError,
-      message: message || validError.message,
-    });
+    super(ClientError.construct(ClientError.Errors.AuthorizationError, message));
   }
 }
 
 class Client403Error extends ClientError {
   constructor(message) {
-    const validError = ClientError.Errors.PRIVILEGE_ERROR;
-    super({
-      ...validError,
-      message: message || validError.message,
-    });
+    super(ClientError.construct(ClientError.Errors.PrivilegeError, message));
   }
 }
 
 class Client404Error extends ClientError {
   constructor(message) {
-    const validError = ClientError.Errors.NOT_FOUND;
-    super({
-      ...validError,
-      message: message || validError.message,
-    });
+    super(ClientError.construct(ClientError.Errors.NotFound, message));
   }
 }
 
 class Client500Error extends ClientError {
   constructor(message) {
-    const validError = ClientError.Errors.INTERNAL_SERVER_ERROR;
-    super({
-      ...validError,
-      message: message || validError.message,
-    });
+    super(ClientError.construct(ClientError.Errors.InternalServerError, message));
   }
 }
 
