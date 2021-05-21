@@ -1,11 +1,11 @@
-const { ClientError, Client500Error } = require('../libs/ClientError');
+const { ClientError, Client404Error, Client500Error } = require('../libs/ClientError');
 const { ClientRedirection } = require('../libs/ClientRedirection');
 const ServerError = require('../libs/ServerError');
 const logger = require('../libs/Logger');
 const env = require('../data/env.json');
 
 const client404Error = (req, res, next) => {
-  return res.status(404).send('Page not found.');
+  return next(new Client404Error());
 };
 
 const clientError = (error, req, res, next) => {
