@@ -4,10 +4,22 @@ class ConnectorInterface {
     this.connection = null;
   }
 
+  /**
+   * Create connection instance for db.
+   */
   async connect() {
-    // TODO: implement connection
     this.connection = {};
   }
+
+  /**
+   * Clear db. Also seeds it if needed.
+   */
+  async flushDatabase() {}
+
+  /**
+   *  Disconnect from db.
+   */
+  async disconnect() {}
 }
 
 module.exports = ConnectorInterface;
