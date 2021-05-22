@@ -3,24 +3,17 @@ const { pingController, healthController } = require('./controllers');
 const {
   validators: { validateQuery },
 } = require('../../../middleware');
+const { HealthCheckDto, PingDto } = require('./dto');
 
 const router = Router();
 
-router.get(
-  '/',
+router.get('/', validateQuery(HealthCheckDto), async ({ query }, res) => {
+  const result = healthController(query);
+  return res.status(200).return(result);
+});
 
-  validateQuery((T) => ({
-    withEnv: T.boolean().optional(),
-  })),
-
-  async ({ query }, res) => {
-    const result = healthController(query.withEnv);
-    return res.status(200).return(result);
-  }
-);
-
-router.get('/ping', validateQuery(['withTime']), async ({ query }, res) => {
-  const result = pingController(query.withTime === 'true');
+router.get('/ping', validateQuery(PingDto), async ({ query }, res) => {
+  const result = pingController(query);
   return res.status(200).return(result);
 });
 

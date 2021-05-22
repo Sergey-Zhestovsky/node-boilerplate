@@ -31,14 +31,6 @@ describe('Route /health-check', function () {
   });
 
   describe('/ping [POST]', function () {
-    test('incorrect request', async () => {
-      const { status } = await request(app)
-        .get(BASE_PATH + '/health-check/ping')
-        .query();
-
-      expect(status).toBe(400);
-    });
-
     test('simple request', async () => {
       const { body, status } = await request(app)
         .get(BASE_PATH + '/health-check/ping')

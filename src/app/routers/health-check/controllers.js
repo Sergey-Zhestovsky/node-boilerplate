@@ -4,21 +4,16 @@ const env = require('../../../data/env.json');
 
 const debug = logger.getDebug('controller:health-check');
 
-const pingController = (withTime) => {
-  debug(`Get in pingController with time: '%s'`, withTime);
-  if (withTime) return { timeStamp: new Date() };
-  return 'pong';
-};
-
-const healthController = (withEnv) => {
-  debug(`Get in healthController with environment: '%s'`, withEnv);
-  if (process.env.NODE_ENV === env.PRODUCTION) withEnv = false;
-  const result = HealthService.getServerStatus(withEnv);
+exports.healthController = (healthCheckDto) => {
+  debug(`Get in healthController with environment: '%s'`, healthCheckDto.withEnv);
+  if (process.env.NODE_ENV === env.PRODUCTION) healthCheckDto.withEnv = false;
+  const result = HealthService.getServerStatus(healthCheckDto.withEnv);
   debug(`Get out healthController`);
   return result;
 };
 
-module.exports = {
-  pingController,
-  healthController,
+exports.pingController = (pingDto) => {
+  debug(`Get in pingController with time: '%s'`, pingDto.withTime);
+  if (pingDto.withTime) return { timeStamp: new Date() };
+  return 'pong';
 };

@@ -6,6 +6,9 @@ class Validator {
     this.config = this.getDefaultConfig();
   }
 
+  /**
+   * @returns {Joi.ValidationOptions}
+   */
   getDefaultConfig() {
     return {
       abortEarly: false,
@@ -15,6 +18,9 @@ class Validator {
     };
   }
 
+  /**
+   * @param {Joi.ValidationOptions} config
+   */
   setConfig(config) {
     const { required = true, ...rest } = config;
     const validatorConfig = {
@@ -24,19 +30,26 @@ class Validator {
     this.config = Object.assign({}, this.config, validatorConfig);
   }
 
+  /**
+   * @param {(joi: Joi) => Joi.SchemaMap | string[]} schema
+   * @param {Joi.ValidationOptions} validationConfig
+   */
   setSchema(schema, config = this.getDefaultConfig()) {
     this.setConfig(config);
 
+    let retrievedSchema = null;
     if (schema instanceof Function) {
-      this.schema = Joi.object(schema(Joi));
-      return this;
+      retrievedSchema = schema(Joi);
+    } else {
+      retrievedSchema = schema;
     }
 
-    if (Array.isArray(schema)) {
+    if (Array.isArray(retrievedSchema)) {
       let validationSchema = {};
-      schema.forEach((setting) => (validationSchema[setting] = Joi.any()));
+      retrievedSchema.forEach((setting) => (validationSchema[setting] = Joi.any()));
       this.schema = Joi.object(validationSchema);
-      return this;
+    } else if (typeof retrievedSchema === 'object') {
+      this.schema = Joi.object(retrievedSchema);
     }
 
     return this;
