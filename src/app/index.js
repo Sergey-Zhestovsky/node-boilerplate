@@ -6,6 +6,6 @@ const swaggerLoader = require('../loaders/swagger.loader');
 module.exports = {
   routes: routerLoader(__dirname),
   graphql: graphqlLoader(__dirname),
-  socket: socketLoader(),
+  socket: socketLoader(__dirname),
   swagger: swaggerLoader(__dirname),
 };

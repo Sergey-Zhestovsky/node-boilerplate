@@ -73,7 +73,6 @@ const swaggerLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
     const validate = deasync(SwaggerParser.validate.bind(SwaggerParser));
     return validate(resultedSwagger);
   } catch (err) {
-    console.log(err);
     logger.error(err.message);
     return null;
   }

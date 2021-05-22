@@ -2,7 +2,7 @@ const HealthService = require('../../../services/HealthService');
 const logger = require('../../../libs/Logger');
 const env = require('../../../data/env.json');
 
-const debug = logger.getDebug('controller:ping');
+const debug = logger.getDebug('controller:health-check');
 
 const pingController = (withTime) => {
   debug(`Get in pingController with time: '%s'`, withTime);
