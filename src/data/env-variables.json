@@ -3,6 +3,7 @@
     "PORT",
     "HOST",
     "DB_URL",
-    "DB_NAME"
+    "DB_NAME",
+    "SWAGGER_SERVER_URL"
   ]
 }
