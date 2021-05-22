@@ -1,7 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
-const deasync = require('deasync');
 const yaml = require('js-yaml');
 const _ = require('lodash');
 const SwaggerParser = require('swagger-parser');
@@ -31,7 +30,7 @@ const extractObjectFromFile = (pathToFile) => {
   return {};
 };
 
-const swaggerLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
+const swaggerLoader = async (relativePath = __dirname, config = DEFAULT_CONFIG) => {
   // load base file
   const baseSwaggerPath = path.resolve(__dirname, '../config/swagger', config.fileName);
   const existedSwaggerBasePaths = glob.sync(baseSwaggerPath);
@@ -70,8 +69,7 @@ const swaggerLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
 
   // validate file
   try {
-    const validate = deasync(SwaggerParser.validate.bind(SwaggerParser));
-    return validate(resultedSwagger);
+    return SwaggerParser.validate(resultedSwagger);
   } catch (err) {
     logger.error(err.message);
     return null;
