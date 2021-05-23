@@ -3,6 +3,7 @@ require('./utils/setupProcess');
 
 const http = require('http');
 
+const { socket } = require('./app');
 const app = require('./express');
 const db = require('./api/database');
 const logger = require('./libs/Logger');
@@ -12,6 +13,8 @@ const main = async (process) => {
     await db.connection.connect();
 
     const server = http.createServer(app);
+    socket(server);
+
     const port = process.env.PORT || 3000;
     const host = process.env.HOST || 'localhost';
 
