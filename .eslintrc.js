@@ -44,4 +44,14 @@ module.exports = {
     'max-len': OFF,
     'no-process-exit': OFF,
   },
+
+  overrides: [
+    {
+      files: '**/*.test.js',
+      rules: {
+        'node/no-unpublished-require': OFF,
+        'node/no-missing-require': OFF,
+      },
+    },
+  ],
 };
