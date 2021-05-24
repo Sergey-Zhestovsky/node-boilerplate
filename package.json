@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "cross-env DEBUG=app:* nodemon src/server.js",
     "prod": "cross-env NODE_ENV=production node src/server.js",
-    "test": "jest --verbose --runInBand"
+    "test": "jest --verbose"
   },
   "keywords": [],
   "author": "",

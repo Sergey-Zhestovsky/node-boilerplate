@@ -3,7 +3,7 @@ const Joi = require('joi');
 const { QueryDto } = require('../../../api/classes/dto');
 
 class HealthCheckDto extends QueryDto {
-  constructor({ withEnv }) {
+  constructor({ withEnv = false }) {
     super();
 
     this.withEnv = withEnv;
@@ -20,7 +20,7 @@ class HealthCheckDto extends QueryDto {
 exports.HealthCheckDto = HealthCheckDto;
 
 class PingDto extends QueryDto {
-  constructor({ withTime }) {
+  constructor({ withTime = false }) {
     super();
 
     this.withTime = withTime;
