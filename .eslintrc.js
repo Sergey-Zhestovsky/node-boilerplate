@@ -46,4 +46,14 @@ module.exports = {
 
     'jsdoc/no-undefined-types': WARN,
   },
+
+  overrides: [
+    {
+      files: '**/*.test.js',
+      rules: {
+        'node/no-unpublished-require': OFF,
+        'node/no-missing-require': OFF,
+      },
+    },
+  ],
 };
