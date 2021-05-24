@@ -1,6 +1,6 @@
-const classOf = (entity, targetClass, constructorArgs) => {
+const classOf = (entity, targetClass, ...constructorArgs) => {
   try {
-    const instance = new entity(constructorArgs);
+    const instance = new entity(...constructorArgs);
     return instance instanceof targetClass;
   } catch (error) {
     return false;

@@ -12,7 +12,7 @@ module.exports = {
 
   extends: ['eslint:recommended', 'plugin:node/recommended', 'prettier', 'plugin:jest/recommended'],
 
-  plugins: ['jest'],
+  plugins: ['jest', 'jsdoc'],
 
   parserOptions: {
     ecmaVersion: 12,
@@ -43,5 +43,7 @@ module.exports = {
     'no-var': ERROR,
     'max-len': OFF,
     'no-process-exit': OFF,
+
+    'jsdoc/no-undefined-types': WARN,
   },
 };
