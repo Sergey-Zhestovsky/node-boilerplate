@@ -1,27 +1,44 @@
+const { Server, Socket } = require('socket.io');
+
+const SocketEvent = require('./socket-event');
+
 class Room {
-  static get RoomName() {
-    return 'ROOM::GLOBAL';
+  static getName() {
+    return new this().getName();
   }
 
-  constructor(socket, roomName = Room.RoomName) {
-    this.socket = socket;
-    this.roomName = roomName;
+  static get Events() {
+    return new this().Events;
   }
 
-  join() {
-    this.socket.join(this.roomName);
+  /** @param {Server} server */
+  constructor(server) {
+    this.server = server;
   }
 
-  toRoom() {
-    return this.socket.to(this.roomName);
+  getName() {
+    return 'room-name';
   }
 
-  emit(message) {
-    this.toRoom().emit(message);
+  /** @returns {Object<string, SocketEvent>} */
+  get Events() {
+    return {};
   }
 
-  leave() {
-    this.socket.leave(this.roomName);
+  /** @param {Socket} socket */
+  join(socket) {
+    socket.join(this.getName());
+  }
+
+  /** @param {Socket} socket */
+  leave(socket) {
+    socket.leave(this.getName());
+  }
+
+  /** @param {Socket} [socket] */
+  toRoom(socket) {
+    if (socket) return socket.to(this.getName());
+    else return this.server.to(this.getName());
   }
 }
 

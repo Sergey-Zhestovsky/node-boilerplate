@@ -1,10 +1,10 @@
 require('events').captureRejections = true;
 
-const { ClientError, Client401Error, Client500Error } = require('../../libs/ClientError');
-const { ClientRedirection } = require('../../libs/ClientRedirection');
-const ServerError = require('../../libs/ServerError');
-const logger = require('../../libs/Logger');
-const env = require('../../data/env.json');
+const { ClientError, Client401Error, Client500Error } = require('../../../libs/ClientError');
+const { ClientRedirection } = require('../../../libs/ClientRedirection');
+const ServerError = require('../../../libs/ServerError');
+const logger = require('../../../libs/Logger');
+const env = require('../../../data/env.json');
 
 const handleError = (error, socket) => {
   if (error instanceof ClientError) {

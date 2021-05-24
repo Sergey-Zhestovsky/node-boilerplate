@@ -1,6 +1,7 @@
 # TODO
 
-- [ ] Rework Socket.
+- [x] Rework Socket.
 - [ ] ? rename `/app/routers` to `rest` or `http` ...
 - [ ] create `README.md` file
-- [ ] setup parallel tests
+- [x] setup parallel tests
+- [ ] Append Socket namespaces
