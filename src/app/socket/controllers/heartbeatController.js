@@ -8,14 +8,14 @@ const SocketEvent = require('../../utils/socket/socket-event');
  * @param {Server} server
  * @param {{ rooms: Object<string, Room>, events: Object<string, SocketEvent> }} ctx
  */
-const heartbeatController = (server, ctx) => {
+const heartbeatController = (server, { rooms, events }) => {
   server.on('connect', (socket) => {
-    ctx.rooms.heartbeatRoom.join(socket);
-    const heartbeatEvent = ctx.rooms.heartbeatRoom.Events.heartbeat.Name;
+    rooms.heartbeatRoom.join(socket);
+    const heartbeatEvent = rooms.heartbeatRoom.Events.heartbeat;
 
-    socket.on(heartbeatEvent, async (payload) => {
+    socket.on(heartbeatEvent.Name, async (payload) => {
       const response = await HealthService.getServerStatus(false);
-      socket.emit(heartbeatEvent, response);
+      socket.emit(heartbeatEvent.Name, response);
     });
   });
 };

@@ -13,4 +13,4 @@ class HeartbeatRoom extends Room {
   }
 }
 
-exports.HeartbeatRoom = HeartbeatRoom;
+module.exports = HeartbeatRoom;
