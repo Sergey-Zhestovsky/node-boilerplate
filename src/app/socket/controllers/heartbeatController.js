@@ -1,0 +1,23 @@
+const { Server } = require('socket.io');
+
+const HealthService = require('../../../services/HealthService');
+const Room = require('../../utils/socket/room');
+const SocketEvent = require('../../utils/socket/socket-event');
+
+/**
+ * @param {Server} server
+ * @param {{ rooms: Object<string, Room>, events: Object<string, SocketEvent> }} ctx
+ */
+const heartbeatController = (server, ctx) => {
+  server.on('connect', (socket) => {
+    ctx.rooms.heartbeatRoom.join(socket);
+    const heartbeatEvent = ctx.rooms.heartbeatRoom.Events.heartbeat.Name;
+
+    socket.on(heartbeatEvent, async (payload) => {
+      const response = await HealthService.getServerStatus(false);
+      socket.emit(heartbeatEvent, response);
+    });
+  });
+};
+
+module.exports = heartbeatController;
