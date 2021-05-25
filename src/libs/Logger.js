@@ -14,6 +14,13 @@ class Logger {
     this.debug = debug('app');
   }
 
+  static get Info() {
+    return {
+      message: Symbol.for('message'),
+      level: Symbol.for('level'),
+    };
+  }
+
   static buildLogger({ logPath, parseArgs = true, logInConsole = true } = {}) {
     const transports = [];
 
@@ -29,7 +36,7 @@ class Logger {
     }
 
     return winston.createLogger({
-      format: Logger.getFormat(parseArgs),
+      format: winston.format.printf((info) => info),
       transports,
     });
   }
@@ -52,7 +59,8 @@ class Logger {
     };
 
     const printf = (info) => {
-      return Logger.assembleLogOutput(info, parseArgs, timeFormatter);
+      const content = info[Logger.Info.message] ? info[Logger.Info.message] : info;
+      return Logger.assembleLogOutput(content, parseArgs, timeFormatter);
     };
 
     return winston.format.combine(winston.format.timestamp(), winston.format.printf(printf));
@@ -89,6 +97,7 @@ class Logger {
         {
           filename: path.join(logPath, level, `${level}-%DATE%.log`),
           level,
+          format: Logger.getFormat(),
         },
         config
       )
@@ -101,7 +110,8 @@ class Logger {
     };
 
     const printf = (info) => {
-      return Logger.assembleLogOutput(info, parseArgs, timeFormatter);
+      const content = info[Logger.Info.message] ? info[Logger.Info.message] : info;
+      return Logger.assembleLogOutput(content, parseArgs, timeFormatter);
     };
 
     return new winston.transports.Console({
@@ -128,6 +138,10 @@ class Logger {
     };
   }
 
+  log(level, message, ...args) {
+    this.winston.log(level, message, ...args);
+  }
+
   error(message, ...args) {
     this.winston.error(message, ...args);
   }
@@ -138,10 +152,6 @@ class Logger {
 
   info(message, ...args) {
     this.winston.info(message, ...args);
-  }
-
-  log(level, message) {
-    this.winston.log({ level, message });
   }
 }
 

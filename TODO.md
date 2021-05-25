@@ -5,4 +5,4 @@
 - [ ] create `README.md` file
 - [x] setup parallel tests
 - [ ] Append Socket namespaces
-- [ ] Log error objects
+- [x] Log error objects
