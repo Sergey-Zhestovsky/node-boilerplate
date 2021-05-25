@@ -6,3 +6,4 @@
 - [x] setup parallel tests
 - [ ] Append Socket namespaces
 - [x] Log error objects
+- [ ] Setup Apollo graphql with Express
