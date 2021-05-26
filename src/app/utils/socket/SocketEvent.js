@@ -16,11 +16,11 @@ class SocketEvent {
   }
 
   toString() {
-    this.Name.toString();
+    return this.Name;
   }
 
   valueOf() {
-    this.Name.toString();
+    return this.Name;
   }
 }
 

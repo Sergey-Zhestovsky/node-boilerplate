@@ -1,6 +1,6 @@
 const { Server, Socket } = require('socket.io');
 
-const SocketEvent = require('./socket-event');
+const SocketEvent = require('./SocketEvent');
 
 class Room {
   static getName() {
@@ -16,13 +16,13 @@ class Room {
     this.server = server;
   }
 
-  getName() {
-    return 'room-name';
-  }
-
   /** @returns {Object<string, SocketEvent>} */
   get Events() {
     return {};
+  }
+
+  getName() {
+    return 'room-name';
   }
 
   /** @param {Socket} socket */

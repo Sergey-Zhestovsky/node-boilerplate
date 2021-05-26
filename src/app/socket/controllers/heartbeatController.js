@@ -1,14 +1,13 @@
 const { Server } = require('socket.io');
 
 const HealthService = require('../../../services/HealthService');
-const Room = require('../../utils/socket/room');
-const SocketEvent = require('../../utils/socket/socket-event');
+const HeartbeatRoom = require('../rooms/HeartbeatRoom');
+const SocketEvent = require('../../utils/socket/SocketEvent');
 
 /**
  * @param {Server} server
- * @param {{ rooms: Object<string, Room>, events: Object<string, SocketEvent> }} ctx
  */
-const heartbeatController = (server, { rooms, events }) => {
+const heartbeatController = (server) => {
   server.on('connect', (socket) => {
     /**
      * Part of proactive action with `socket`.
@@ -20,19 +19,29 @@ const heartbeatController = (server, { rooms, events }) => {
      *
      * E.g.:
      * if (product.stock === 0) {
+     *   // emit for everyone in `product.id` product room (better for ts)
      *   rooms.productRoom.to(product.id).emit('Product out of stock');
+     *   // or (better for js)
+     *   const productRoom = new ProductRoom(server);
+     *   productRoom.to(product.id).emit('Product out of stock');
+     *   
+     *   // if you want to emit to everyone except current user:
+     *   productRoom.to(product.id, socket).emit('Product out of stock');
+     *   // or ?
+     *   productRoom.to(socket, product.id).emit('Product out of stock');
      * }
      *
      * E.g.:
      * socket.user.meeting.state.changes() =>
      * if (socket.user.meeting.state === 'INACTIVE') {
      *   rooms.meetingRoom
-     *     .to(socket, socket.user.meeting.id)
+     *     .to(socket, socket.user.meeting.id) // or rather: `.to(socket.user.meeting.id, socket)`
      *     .emit('user inactive', socket.user.id);
      * }
      */
-    rooms.heartbeatRoom.join(socket);
-    const heartbeatEvent = rooms.heartbeatRoom.Events.heartbeat;
+    const heartbeatRoom = new HeartbeatRoom(server);
+    heartbeatRoom.join(socket);
+    const heartbeatEvent = heartbeatRoom.Events.heartbeat;
 
     /**
      * Part of reactive action with `socket`.
@@ -88,7 +97,40 @@ const heartbeatController = (server, { rooms, events }) => {
      * 
      * Looks like rooms have own set of events.
      * Therefore, there are 2 types of events: `global` & `local`.
-     * ???
+     * Local events, if they come from client, needs to be validated:
+     * 
+     * e.g.: socket.on('room:product:<name-of-event>', () => {
+     *   if (!socket.in('room:product')) throw ...;
+     * });
+     * 
+     * ? This can be done by SocketHandlerConstructor:
+     * 
+     * ...
+     * // SocketHandler.Event - returns SocketEvent 
+     * // SocketHandler.Room - returns Room related to handler and Event;
+     *  
+     * if (SocketHandler.Room)
+     * // or
+     * if (SocketHandler.Event.Room) // ? link to room event
+     * // then
+     * // Event should contain link to Room
+     * [Event.Name]: (...args) => {
+     *  validateRoomAccess(SocketHandler.Room);
+     *  SocketHandler.handle(...args);
+     * }
+     * ...
+     */
+
+
+    /**
+     * File hierarchy needs to be considered.
+     * 
+     * - SocketEvent
+     * - Room <SocketEvent>
+     * - SocketHandler <SocketEvent, Room <SocketEvent>> (`SocketEvent`, `Room` can be imported to use in .handle())
+     * - SocketHandlerConstructor <SocketHandler>
+     * - Controller (Not a class. SocketEvent, Room can be imported)
+     * - Middleware (Not a class. SocketEvent, Room can be imported (but no reason?))
      */
   });
 };
