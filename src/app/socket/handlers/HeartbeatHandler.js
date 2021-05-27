@@ -18,6 +18,10 @@ class HeartbeatHandler extends SocketHandler {
   validator(T) {
     return null;
   }
+
+  guard() {
+    return true;
+  }
 }
 
 module.exports = HeartbeatHandler;

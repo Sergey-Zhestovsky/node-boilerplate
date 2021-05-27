@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const { Server, Socket } = require('socket.io');
 
-const Room = require('./Room');
+const SocketEvent = require('./SocketEvent');
 
 class SocketHandler {
   /**
@@ -13,36 +13,22 @@ class SocketHandler {
     this.socket = socket;
   }
 
-  /**
-   * @returns {string}
-   */
+  /** @returns {SocketEvent} */
   get Event() {
-    return 'socket-event';
+    return new SocketEvent();
   }
 
   /**
-   * @returns {typeof Room | Room | null}
-   */
-  get Room() {
-    return null;
-  }
-
-  /**
-   * if this.Room !== null
-   */
-  validateRoomAccess() {
-    if (!this.socket.rooms.has(this.Room)) {
-      throw Error('403');
-    }
-  }
-
-  /**
-   * @param {any[]} args
+   * Method for handling incoming event.
+   *
+   * @param {any[]} args - event payload
    */
   handle(...args) {}
 
   /**
-   * Return s validation schema for dto
+   * Method for validation user's payloads. Also, replace original values with
+   * validated object. Return s validation schema for dto.
+   *
    * @param {Joi} T
    * @returns {null | Joi.Schema | (Joi.Schema | null)[]} - `null`: without validation,
    *   `Joi.Schema`: for validation first arg, array of `Joi.Schema | null`: for
@@ -50,6 +36,16 @@ class SocketHandler {
    */
   validator(T) {
     return null;
+  }
+
+  /**
+   * Method for validating request before it gets to handle method.
+   *
+   * @param {any[]} args - event payload
+   * @returns {boolean}
+   */
+  guard(...args) {
+    return true;
   }
 }
 

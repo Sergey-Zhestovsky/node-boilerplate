@@ -15,22 +15,18 @@ class SocketHandlerFactory {
     this.handlers = handlers;
   }
 
-  /**
-   * @param {typeof SocketHandler} handler
-   */
+  /** @param {typeof SocketHandler} handler */
   appendHandler(handler) {
     this.handlers.push(handler);
   }
 
-  /**
-   * @param {Socket} socket
-   */
+  /** @param {Socket} socket */
   inject(socket) {
     this.handlers.forEach((Handler) => {
       const handler = new Handler(this.server, socket);
 
       const handleFn = (...args) => {
-        if (handler.Room) handler.validateRoomAccess();
+        if (!handler.guard(...args)) return;
         const validatedPayloads = SocketHandlerFactory.validatePayloads(handler, args);
         handler.handle(...validatedPayloads);
       };

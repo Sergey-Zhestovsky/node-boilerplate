@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
+const _ = require('lodash');
 const { Server } = require('socket.io');
 
 const logger = require('../libs/Logger');
 const socketConfig = require('../config/socket.config');
-const SocketHandlerFactory = require('../app/utils/socket/SocketHandlerFactory');
 
 const DEFAULT_CONFIG = {
   /** relative folder path to file */
@@ -20,6 +20,7 @@ const DEFAULT_CONFIG = {
     controllers: '/controllers',
     namespaces: '/namespaces',
   },
+  socketHandlerFactory: null,
 };
 
 const retrieveModule = (pathToFile, errorMessage = 'Cant resolve path') => {
@@ -27,6 +28,7 @@ const retrieveModule = (pathToFile, errorMessage = 'Cant resolve path') => {
     return require(pathToFile);
   } catch (error) {
     logger.warn(`${errorMessage} '${pathToFile}'`);
+    return null;
   }
 };
 
@@ -58,6 +60,7 @@ const applyControllers = (controllerFiles, server, context) => {
 };
 
 const socketLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
+  config = _.merge({}, DEFAULT_CONFIG, config);
   const rootPath = path.resolve(relativePath, config.pathPattern);
 
   // get (import) all files
@@ -79,15 +82,21 @@ const socketLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
   const errorHandlerFilePath = path.join(rootPath, mfs.path, mfs.errorHandlerFile);
   middlewareFiles.errorHandlerFile = retrieveModule(errorHandlerFilePath, middlewareErr) || [];
   // get handlers
-  handlerFiles = retrieveFilesFromDir(path.join(rootPath, config.filesStructure.handlers));
-  handlerFiles = handlerFiles.map((v) => v.module);
+  if (config.socketHandlerFactory) {
+    handlerFiles = retrieveFilesFromDir(path.join(rootPath, config.filesStructure.handlers));
+    handlerFiles = handlerFiles.map((v) => v.module);
+  }
   // get controllers
   controllerFiles = retrieveFilesFromDir(path.join(rootPath, config.filesStructure.controllers));
 
   // create and assemble server
   return (httpServer) => {
     const io = new Server(httpServer, socketConfig);
-    const socketHandlerFactory = new SocketHandlerFactory(io, handlerFiles);
+
+    let socketHandlerFactory = null;
+    if (config.socketHandlerFactory) {
+      socketHandlerFactory = new config.socketHandlerFactory(io, handlerFiles);
+    }
 
     // apply server middleware
     middlewareFiles.entryServerFile.forEach((middleware) => io.use(middleware));
@@ -98,7 +107,7 @@ const socketLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
       // apply error handlers
       middlewareFiles.errorHandlerFile.forEach((middleware) => middleware(io, socket));
       // apply event handlers
-      socketHandlerFactory.inject(socket);
+      if (socketHandlerFactory !== null) socketHandlerFactory.inject(socket);
     });
 
     // apply controllers
