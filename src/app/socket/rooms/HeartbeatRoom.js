@@ -1,9 +1,9 @@
-const Room = require('../../utils/socket/room');
+const Room = require('../../utils/socket/Room');
 const HeartbeatEvent = require('../events/HeartbeatEvent');
 
 class HeartbeatRoom extends Room {
   getName() {
-    return 'ROOM::HEARTBEAT';
+    return 'room:heartbeat';
   }
 
   get Events() {

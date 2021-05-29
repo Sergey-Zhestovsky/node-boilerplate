@@ -5,7 +5,9 @@ const swaggerLoader = require('../loaders/swagger.loader');
 
 module.exports = {
   routes: routerLoader(__dirname),
-  graphql: graphqlLoader(__dirname),
-  socket: socketLoader(__dirname),
   swagger: swaggerLoader(__dirname),
+  graphql: graphqlLoader(__dirname),
+  socket: socketLoader(__dirname, {
+    socketHandlerFactory: require('./utils/socket/SocketHandlerFactory'),
+  }),
 };

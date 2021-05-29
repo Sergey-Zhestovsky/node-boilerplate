@@ -26,7 +26,10 @@ class PingDto extends QueryDto {
     this.withTime = withTime;
   }
 
-  /** @param {Joi} T */
+  /**
+   * @param {Joi} T
+   * @returns {Joi.Schema}
+   */
   static validator(T) {
     return {
       withTime: T.boolean().optional(),

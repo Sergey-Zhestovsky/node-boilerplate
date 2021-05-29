@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const _ = require('lodash');
 const { Server } = require('socket.io');
 
 const logger = require('../libs/Logger');
@@ -15,11 +16,11 @@ const DEFAULT_CONFIG = {
       entrySocketFile: 'entrySocket.js',
       errorHandlerFile: 'errorHandler.js',
     },
-    rooms: '/rooms',
-    events: '/events',
+    handlers: '/handlers',
     controllers: '/controllers',
     namespaces: '/namespaces',
   },
+  socketHandlerFactory: null,
 };
 
 const retrieveModule = (pathToFile, errorMessage = 'Cant resolve path') => {
@@ -27,6 +28,7 @@ const retrieveModule = (pathToFile, errorMessage = 'Cant resolve path') => {
     return require(pathToFile);
   } catch (error) {
     logger.warn(`${errorMessage} '${pathToFile}'`);
+    return null;
   }
 };
 
@@ -45,19 +47,6 @@ const retrieveFilesFromDir = (dirPath) => {
   return res;
 };
 
-const initiateClasses = (moduleArray, error = (err, ModuleFile) => null, ...args) => {
-  return moduleArray
-    .map((ModuleFile) => {
-      try {
-        return new ModuleFile.module(args);
-      } catch (err) {
-        logger.warn(error(err, ModuleFile));
-        return null;
-      }
-    })
-    .filter((val) => val !== null);
-};
-
 const applyControllers = (controllerFiles, server, context) => {
   const processObject = (controller) => {
     if (typeof controller === 'function') {
@@ -67,10 +56,11 @@ const applyControllers = (controllerFiles, server, context) => {
     }
   };
 
-  controllerFiles.forEach(processObject);
+  controllerFiles.forEach(({ module }) => processObject(module));
 };
 
 const socketLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
+  config = _.merge({}, DEFAULT_CONFIG, config);
   const rootPath = path.resolve(relativePath, config.pathPattern);
 
   // get (import) all files
@@ -79,29 +69,35 @@ const socketLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
     entrySocketFile: null,
     errorHandlerFile: null,
   };
-  let roomFiles = [];
-  let eventFiles = [];
+  let handlerFiles = [];
   let controllerFiles = [];
 
   // get middleware
   const mfs = config.filesStructure.middleware;
   const middlewareErr = 'Cant resolve socket middleware by path';
   const entryServerFilePath = path.join(rootPath, mfs.path, mfs.entryServerFile);
-  middlewareFiles.entryServerFile = retrieveModule(entryServerFilePath, middlewareErr);
+  middlewareFiles.entryServerFile = retrieveModule(entryServerFilePath, middlewareErr) || [];
   const entrySocketFilePath = path.join(rootPath, mfs.path, mfs.entrySocketFile);
-  middlewareFiles.entrySocketFile = retrieveModule(entrySocketFilePath, middlewareErr);
+  middlewareFiles.entrySocketFile = retrieveModule(entrySocketFilePath, middlewareErr) || [];
   const errorHandlerFilePath = path.join(rootPath, mfs.path, mfs.errorHandlerFile);
-  middlewareFiles.errorHandlerFile = retrieveModule(errorHandlerFilePath, middlewareErr);
-  // get rooms
-  roomFiles = retrieveFilesFromDir(path.join(rootPath, config.filesStructure.rooms));
-  // get events
-  eventFiles = retrieveFilesFromDir(path.join(rootPath, config.filesStructure.events));
+  middlewareFiles.errorHandlerFile = retrieveModule(errorHandlerFilePath, middlewareErr) || [];
+  // get handlers
+  if (config.socketHandlerFactory) {
+    handlerFiles = retrieveFilesFromDir(path.join(rootPath, config.filesStructure.handlers));
+    handlerFiles = handlerFiles.map((v) => v.module);
+  }
   // get controllers
   controllerFiles = retrieveFilesFromDir(path.join(rootPath, config.filesStructure.controllers));
 
   // create and assemble server
   return (httpServer) => {
     const io = new Server(httpServer, socketConfig);
+
+    let socketHandlerFactory = null;
+    if (config.socketHandlerFactory) {
+      socketHandlerFactory = new config.socketHandlerFactory(io, handlerFiles);
+    }
+
     // apply server middleware
     middlewareFiles.entryServerFile.forEach((middleware) => io.use(middleware));
 
@@ -110,25 +106,12 @@ const socketLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
       middlewareFiles.entrySocketFile.forEach((middleware) => socket.use(middleware));
       // apply error handlers
       middlewareFiles.errorHandlerFile.forEach((middleware) => middleware(io, socket));
+      // apply event handlers
+      if (socketHandlerFactory !== null) socketHandlerFactory.inject(socket);
     });
 
-    // setup rooms
-    const roomsCtx = initiateClasses(
-      roomFiles,
-      (err, ModuleFile) => `Socket room '${ModuleFile.file}' was not setup.`,
-      io
-    );
-
-    // setup events
-    const eventsCtx = initiateClasses(
-      eventFiles,
-      (err, ModuleFile) => `Socket event '${ModuleFile.file}' was not setup.`
-    );
-
-    const ctx = { rooms: roomsCtx, events: eventsCtx };
-
     // apply controllers
-    applyControllers(controllerFiles, io, ctx);
+    applyControllers(controllerFiles, io);
 
     // ? apply namespaces
     //
