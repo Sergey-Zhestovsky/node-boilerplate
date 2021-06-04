@@ -7,16 +7,14 @@ const BASE_PATH = '/api/v1';
 describe('Route /health-check', function () {
   describe('/ [GET]', function () {
     test('simple request', async () => {
-      const { status } = await request(app)
-        .get(BASE_PATH + '/health-check')
-        .query();
+      const { status } = await request(app).get(`${BASE_PATH}/health-check`).query();
 
       expect(status).toBe(200);
     });
 
     test('responds with env', async () => {
       const { body, status } = await request(app)
-        .get(BASE_PATH + '/health-check')
+        .get(`${BASE_PATH}/health-check`)
         .query({ withEnv: true });
 
       expect(status).toBe(200);
@@ -33,7 +31,7 @@ describe('Route /health-check', function () {
   describe('/ping [POST]', function () {
     test('simple request', async () => {
       const { body, status } = await request(app)
-        .get(BASE_PATH + '/health-check/ping')
+        .get(`${BASE_PATH}/health-check/ping`)
         .query({ withTime: false });
 
       expect(status).toBe(200);
@@ -42,7 +40,7 @@ describe('Route /health-check', function () {
 
     test('with valid body', async () => {
       const { body, status } = await request(app)
-        .get(BASE_PATH + '/health-check/ping')
+        .get(`${BASE_PATH}/health-check/ping`)
         .query({ withTime: true });
 
       expect(status).toBe(200);

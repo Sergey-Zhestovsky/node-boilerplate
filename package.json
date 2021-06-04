@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "cross-env DEBUG=app:* nodemon src/server.js",
     "prod": "cross-env NODE_ENV=production node src/server.js",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "lint": "node node_modules/.bin/eslint --ext .js src/"
   },
   "keywords": [],
   "author": "",

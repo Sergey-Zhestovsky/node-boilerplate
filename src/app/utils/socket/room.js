@@ -38,7 +38,7 @@ class Room {
   /** @param {Socket} [socket] */
   toRoom(socket) {
     if (socket) return socket.to(this.getName());
-    else return this.server.to(this.getName());
+    return this.server.to(this.getName());
   }
 }
 

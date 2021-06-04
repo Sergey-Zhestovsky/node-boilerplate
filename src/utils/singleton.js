@@ -2,9 +2,9 @@ module.exports = (Class) => {
   let instance = null;
 
   return new Proxy(Class, {
-    construct: (target, args) => {
+    construct: (Target, args) => {
       if (instance) return instance;
-      instance = new target(...args);
+      instance = new Target(...args);
       return instance;
     },
   });

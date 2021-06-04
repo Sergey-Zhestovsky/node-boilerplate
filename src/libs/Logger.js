@@ -41,9 +41,9 @@ class Logger {
     });
   }
 
-  static assembleLogOutput(info, parseArgs = true, getTime) {
+  static assembleLogOutput(info, parseArgs = true, getTime = (timestamp) => timestamp) {
     const { timestamp, level, message, code, stack, ...args } = info;
-    let ts = getTime ? getTime(timestamp, info) : timestamp;
+    const ts = getTime(timestamp, info);
     let output = message;
 
     if (code) output += `\ncode: ${code}`;
@@ -92,16 +92,12 @@ class Logger {
       zippedArchive: true,
     }
   ) {
-    return new DailyRotateFile(
-      Object.assign(
-        {
-          filename: path.join(logPath, level, `${level}-%DATE%.log`),
-          level,
-          format: Logger.getFormat(),
-        },
-        config
-      )
-    );
+    return new DailyRotateFile({
+      filename: path.join(logPath, level, `${level}-%DATE%.log`),
+      level,
+      format: Logger.getFormat(),
+      ...config,
+    });
   }
 
   static getConsoleTransport(parseArgs = true) {

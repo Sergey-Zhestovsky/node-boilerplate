@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 require('colors');
 
 const env = require('../data/env.json');
@@ -13,6 +15,7 @@ const run = async (args) => {
 
   if (!scriptName) return console.log('Script name is required.');
   if (!environment) return console.log('Node environment is required.');
+
   if (!Object.values(env).includes(environment)) {
     return console.log(`Node environment should be one of '${Object.values(env).join(`', '`)}'.`);
   }
@@ -25,7 +28,7 @@ const run = async (args) => {
   }
 
   const result = await script();
-  console.log(`Script result:`.cyan + `\n${result}`);
+  console.log(`${`Script result:`.cyan}\n${result}`);
   console.log();
   process.exit(0);
 };

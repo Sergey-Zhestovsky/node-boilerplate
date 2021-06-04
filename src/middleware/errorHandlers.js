@@ -11,7 +11,7 @@ const client404Error = (req, res, next) => {
 const clientError = (error, req, res, next) => {
   if (error instanceof ClientError) return res.throw(error);
   if (error instanceof ClientRedirection) return error.redirect(res);
-  else return next(error);
+  return next(error);
 };
 
 const serverError = (error, req, res, next) => {
@@ -20,9 +20,9 @@ const serverError = (error, req, res, next) => {
 
   if (process.env.NODE_ENV === env.DEVELOPMENT) {
     return res.status(500).return(null, err.getError());
-  } else {
-    return res.throw(new Client500Error());
   }
+
+  return res.throw(new Client500Error());
 };
 
 module.exports = [client404Error, clientError, serverError];

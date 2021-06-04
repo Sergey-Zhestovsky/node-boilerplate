@@ -16,6 +16,7 @@ const routesAssembler = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
 
   root.forEach((rootFolder) => {
     const relPath = path.join(config.pathPattern, rootFolder);
+
     try {
       result.push(require(path.resolve(relativePath, relPath, config.fileName)));
     } catch (e) {

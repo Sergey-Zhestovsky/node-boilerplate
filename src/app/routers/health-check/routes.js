@@ -1,11 +1,11 @@
-const Router = require('../../utils/routers/router');
+const expressRouter = require('../../utils/routers/router');
 const { pingController, healthController } = require('./controllers');
 const {
   validators: { validateQuery },
 } = require('../../../middleware');
 const { HealthCheckDto, PingDto } = require('./dto');
 
-const router = Router();
+const router = expressRouter();
 
 router.get('/', validateQuery(HealthCheckDto), async ({ query }, res) => {
   const result = healthController(query);
@@ -17,4 +17,4 @@ router.get('/ping', validateQuery(PingDto), async ({ query }, res) => {
   return res.status(200).return(result);
 });
 
-module.exports = Router().use('/health-check', router);
+module.exports = expressRouter().use('/health-check', router);
