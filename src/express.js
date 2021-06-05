@@ -1,18 +1,17 @@
 const express = require('express');
-const swaggerUi = require('swagger-ui-express');
 
-const { routes, swagger } = require('./app');
-const { entry, errorHandler } = require('./middleware');
-const swaggerConfig = require('./config/swagger/swagger.config');
+const { routes, swagger, asyncapi } = require('./app');
+const {
+  entry,
+  errorHandler,
+  swagger: swaggerMiddleware,
+  asyncapi: asyncapiMiddleware,
+} = require('./middleware');
 
 const app = express();
 
-if (swaggerConfig.whiteListEnv.includes(process.env.NODE_ENV)) {
-  app.use('/swagger', swaggerUi.serve);
-  swagger.then((swaggerAPI) => {
-    app.get('/swagger', swaggerUi.setup(swaggerAPI));
-  });
-}
+swaggerMiddleware(app, swagger);
+asyncapiMiddleware(app, asyncapi);
 
 app.use(entry);
 app.use('/api/v1/', routes);

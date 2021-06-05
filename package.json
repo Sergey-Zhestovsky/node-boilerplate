@@ -13,6 +13,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@asyncapi/generator": "^1.7.1",
+    "@asyncapi/html-template": "^0.21.5",
+    "@asyncapi/parser": "^1.5.1",
     "@types/node": "^15.6.0",
     "body-parser": "^1.19.0",
     "colors": "^1.4.0",

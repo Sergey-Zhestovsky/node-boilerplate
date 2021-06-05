@@ -30,50 +30,56 @@ const extractObjectFromFile = (pathToFile) => {
   return {};
 };
 
-const swaggerLoader = async (relativePath = __dirname, config = DEFAULT_CONFIG) => {
-  // load base file
-  const baseSwaggerPath = path.resolve(__dirname, '../config/swagger', config.fileName);
-  const existedSwaggerBasePaths = glob.sync(baseSwaggerPath);
+const swaggerLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
+  return async () => {
+    // load base file
+    const baseSwaggerPath = path.resolve(__dirname, '../config/swagger', config.fileName);
+    const existedSwaggerBasePaths = glob.sync(baseSwaggerPath);
 
-  if (existedSwaggerBasePaths.length === 0) {
-    logger.error(`Base swagger file not found by path '${baseSwaggerPath}'`);
-    return null;
-  }
+    if (existedSwaggerBasePaths.length === 0) {
+      logger.error(`Base swagger file not found by path '${baseSwaggerPath}'`);
+      return null;
+    }
 
-  const baseSwaggerFile = extractObjectFromFile(existedSwaggerBasePaths[0]);
-  // add server path
-  baseSwaggerFile.servers = [...(baseSwaggerFile.servers || []), { url: swaggerConfig.serverURL }];
+    const baseSwaggerFile = extractObjectFromFile(existedSwaggerBasePaths[0]);
+    // add server path
+    baseSwaggerFile.servers = [
+      ...(baseSwaggerFile.servers || []),
+      { url: swaggerConfig.serverURL },
+    ];
 
-  // load all files from app
-  const pathToAllSwaggerFiles = path.resolve(relativePath, config.filePath, config.fileName);
-  const foundSwaggerFilePaths = glob.sync(pathToAllSwaggerFiles);
-  const foundSwaggerFiles = foundSwaggerFilePaths.map((sp) => {
-    const obj = extractObjectFromFile(sp);
-    // only fields `tags`, `components`, `paths`
-    return { tags: obj.tags || [], components: obj.components || {}, paths: obj.paths || {} };
-  });
+    // load all files from app
+    const pathToAllSwaggerFiles = path.resolve(relativePath, config.filePath, config.fileName);
+    const foundSwaggerFilePaths = glob.sync(pathToAllSwaggerFiles);
+    const foundSwaggerFiles = foundSwaggerFilePaths.map((sp) => {
+      const obj = extractObjectFromFile(sp);
+      // only fields `tags`, `components`, `paths`
+      return { tags: obj.tags || [], components: obj.components || {}, paths: obj.paths || {} };
+    });
 
-  // parse and concat file
-  const concatSwaggerAPI = _.mergeWith({}, ...foundSwaggerFiles, (objValue, srcValue) => {
-    if (objValue === null) return srcValue;
-    if (srcValue === null) return objValue;
-  });
+    // parse and concat file
+    const concatSwaggerAPI = _.mergeWith({}, ...foundSwaggerFiles, (objValue, srcValue) => {
+      if (objValue === null) return srcValue;
+      if (srcValue === null) return objValue;
+      return objValue;
+    });
 
-  // merge resulted swagger file
-  const resultedSwagger = _.merge({}, baseSwaggerFile, concatSwaggerAPI);
-  if (!resultedSwagger.tags) resultedSwagger.tags = [];
-  if (!resultedSwagger.paths) resultedSwagger.paths = {};
-  if (!resultedSwagger.components) resultedSwagger.components = {};
-  if (!resultedSwagger.components.securitySchemes) resultedSwagger.components.securitySchemes = {};
-  if (!resultedSwagger.components.schemas) resultedSwagger.components.schemas = {};
+    // merge resulted swagger file
+    const resSwagger = _.merge({}, baseSwaggerFile, concatSwaggerAPI);
+    if (!resSwagger.tags) resSwagger.tags = [];
+    if (!resSwagger.paths) resSwagger.paths = {};
+    if (!resSwagger.components) resSwagger.components = {};
+    if (!resSwagger.components.securitySchemes) resSwagger.components.securitySchemes = {};
+    if (!resSwagger.components.schemas) resSwagger.components.schemas = {};
 
-  // validate file
-  try {
-    return SwaggerParser.validate(resultedSwagger);
-  } catch (err) {
-    logger.error(err.message);
-    return null;
-  }
+    // validate file
+    try {
+      return SwaggerParser.validate(resSwagger);
+    } catch (err) {
+      logger.error(err.message);
+      return null;
+    }
+  };
 };
 
 module.exports = swaggerLoader;

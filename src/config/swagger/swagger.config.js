@@ -1,6 +1,4 @@
-const env = require('../../data/env.json');
-
 module.exports = {
-  whiteListEnv: [env.DEVELOPMENT],
+  withSwagger: process.env.SWAGGER === 'on',
   serverURL: process.env.SWAGGER_SERVER_URL,
 };
