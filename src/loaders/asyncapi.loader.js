@@ -48,7 +48,7 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
       return null;
     }
 
-    let baseAsyncapiFile = extractObjectFromFile(existedAsyncapiBasePaths[0], (doc) => {
+    const baseAsyncapiFile = extractObjectFromFile(existedAsyncapiBasePaths[0], (doc) => {
       return doc.replace(/\{\{(.+?)\}\}/g, (origin, variable) => {
         return asyncapiConfig.vars[variable] || origin;
       });
@@ -75,19 +75,18 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
     });
 
     // merge resulted asyncapi file
-    const resultedAsyncapi = _.merge({}, baseAsyncapiFile, concatAsyncapiAPI);
-    if (!resultedAsyncapi.tags) resultedAsyncapi.tags = [];
-    if (!resultedAsyncapi.channels) resultedAsyncapi.channels = {};
-    if (!resultedAsyncapi.components) resultedAsyncapi.components = {};
-    if (!resultedAsyncapi.components.securitySchemes)
-      resultedAsyncapi.components.securitySchemes = {};
-    if (!resultedAsyncapi.components.schemas) resultedAsyncapi.components.schemas = {};
+    const resAsyncapi = _.merge({}, baseAsyncapiFile, concatAsyncapiAPI);
+    if (!resAsyncapi.tags) resAsyncapi.tags = [];
+    if (!resAsyncapi.channels) resAsyncapi.channels = {};
+    if (!resAsyncapi.components) resAsyncapi.components = {};
+    if (!resAsyncapi.components.securitySchemes) resAsyncapi.components.securitySchemes = {};
+    if (!resAsyncapi.components.schemas) resAsyncapi.components.schemas = {};
 
     // validate asyncapi model
     let validAsyncapi = null;
 
     try {
-      validAsyncapi = await parser.parse(resultedAsyncapi);
+      validAsyncapi = await parser.parse(resAsyncapi);
     } catch (error) {
       logger.error(error);
       return null;

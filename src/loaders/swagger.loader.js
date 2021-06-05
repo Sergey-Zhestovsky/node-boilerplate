@@ -65,17 +65,16 @@ const swaggerLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
     });
 
     // merge resulted swagger file
-    const resultedSwagger = _.merge({}, baseSwaggerFile, concatSwaggerAPI);
-    if (!resultedSwagger.tags) resultedSwagger.tags = [];
-    if (!resultedSwagger.paths) resultedSwagger.paths = {};
-    if (!resultedSwagger.components) resultedSwagger.components = {};
-    if (!resultedSwagger.components.securitySchemes)
-      resultedSwagger.components.securitySchemes = {};
-    if (!resultedSwagger.components.schemas) resultedSwagger.components.schemas = {};
+    const resSwagger = _.merge({}, baseSwaggerFile, concatSwaggerAPI);
+    if (!resSwagger.tags) resSwagger.tags = [];
+    if (!resSwagger.paths) resSwagger.paths = {};
+    if (!resSwagger.components) resSwagger.components = {};
+    if (!resSwagger.components.securitySchemes) resSwagger.components.securitySchemes = {};
+    if (!resSwagger.components.schemas) resSwagger.components.schemas = {};
 
     // validate file
     try {
-      return SwaggerParser.validate(resultedSwagger);
+      return SwaggerParser.validate(resSwagger);
     } catch (err) {
       logger.error(err.message);
       return null;

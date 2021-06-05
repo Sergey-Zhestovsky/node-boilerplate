@@ -18,9 +18,9 @@ const swaggerMiddleware = (app, swagger) => {
 
     if (swaggerAPI === null) {
       return next(new Client404Error());
-    } else {
-      return swaggerUi.setup(swaggerAPI)(req, res, next);
     }
+
+    return swaggerUi.setup(swaggerAPI)(req, res, next);
   });
 };
 

@@ -1,5 +1,3 @@
-const env = require('../../data/env.json');
-
 module.exports = {
   withAsyncapi: process.env.ASYNCAPI === 'on',
   vars: {
