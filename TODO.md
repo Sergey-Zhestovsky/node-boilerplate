@@ -1,14 +1,10 @@
 # TODO
 
-- [x] Rework Socket.
-- [ ] ? rename `/app/routers` to `rest` or `http` ...
-- [x] create `README.md` file
-- [x] setup parallel tests
-- [ ] Append Socket namespaces
-- [x] Log error objects
-- [x] Socket handlers definition.
-- [x] AsyncAPI for socket API docs
-  - [asyncapi.com](https://www.asyncapi.com/)
-  - [asyncapi.com/websocket-part1]()
-  - [asyncapi.com/websocket-part2]()
 - [ ] Setup Apollo graphql with Express
+- [ ] append graphql structure
+- [ ] Append Socket namespaces
+- [ ] write swagger doc
+- [ ] write asyncapi doc
+- [ ] append README with 
+ - underhood process
+ - `doc` folder in `/socket`
