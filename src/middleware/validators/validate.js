@@ -21,7 +21,8 @@ const validate = (requestProperty, errorMessage = (error) => error) => {
       if (error) return next(new Client400Error(errorMessage(error)));
 
       if (isDto && replaceContent === undefined) {
-        req[requestProperty] = new schema(value);
+        const DtoSchema = schema;
+        req[requestProperty] = new DtoSchema(value);
       } else if (replaceContent) {
         req[requestProperty] = value;
       }

@@ -18,9 +18,9 @@ const main = async (process) => {
     const port = process.env.PORT || 3000;
     const host = process.env.HOST || 'localhost';
 
-    server.listen(port, host, () => 
-      logger.info(`Server in '${process.env.NODE_ENV}' mode listening on: http://${host}:${port}`)
-    );
+    server.listen(port, host, () => {
+      logger.info(`Server in '${process.env.NODE_ENV}' mode listening on: http://${host}:${port}`);
+    });
   } catch (error) {
     logger.error(error);
   }

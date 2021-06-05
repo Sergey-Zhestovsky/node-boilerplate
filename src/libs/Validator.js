@@ -27,7 +27,7 @@ class Validator {
       presence: required ? 'required' : 'optional',
       ...rest,
     };
-    this.config = Object.assign({}, this.config, validatorConfig);
+    this.config = { ...this.config, ...validatorConfig };
   }
 
   /**
@@ -38,6 +38,7 @@ class Validator {
     this.setConfig(config);
 
     let retrievedSchema = null;
+
     if (schema instanceof Function) {
       retrievedSchema = schema(Joi);
     } else {
@@ -45,7 +46,7 @@ class Validator {
     }
 
     if (Array.isArray(retrievedSchema)) {
-      let validationSchema = {};
+      const validationSchema = {};
       retrievedSchema.forEach((setting) => (validationSchema[setting] = Joi.any()));
       this.schema = Joi.object(validationSchema);
     } else if (typeof retrievedSchema === 'object') {

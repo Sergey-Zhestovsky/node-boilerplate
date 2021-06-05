@@ -47,10 +47,6 @@ class ClientError extends Error {
       date: this.date,
     };
   }
-
-  reject() {
-    return Promise.reject(this);
-  }
 }
 
 class Client400Error extends ClientError {

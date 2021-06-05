@@ -1,3 +1,6 @@
+/* eslint-disable no-console */
+/* eslint-disable no-param-reassign */
+
 require('colors');
 
 const { list: envVariables } = require('../data/env-variables.json');
@@ -19,7 +22,7 @@ const validateVariables = (configPath) => {
   const allVariables = {};
   const missedVariables = [];
 
-  for (let variable of envVariables) {
+  for (const variable of envVariables) {
     const pVariable = process.env[variable];
 
     if (pVariable === undefined) {

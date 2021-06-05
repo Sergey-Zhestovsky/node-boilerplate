@@ -52,7 +52,7 @@ const applyControllers = (controllerFiles, server, context) => {
     if (typeof controller === 'function') {
       controller(server, context);
     } else if (typeof controller === 'object') {
-      for (let name in controller) processObject(controller[name]);
+      for (const name in controller) processObject(controller[name]);
     }
   };
 
@@ -60,6 +60,7 @@ const applyControllers = (controllerFiles, server, context) => {
 };
 
 const socketLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
+  // eslint-disable-next-line no-param-reassign
   config = _.merge({}, DEFAULT_CONFIG, config);
   const rootPath = path.resolve(relativePath, config.pathPattern);
 
@@ -81,11 +82,13 @@ const socketLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
   middlewareFiles.entrySocketFile = retrieveModule(entrySocketFilePath, middlewareErr) || [];
   const errorHandlerFilePath = path.join(rootPath, mfs.path, mfs.errorHandlerFile);
   middlewareFiles.errorHandlerFile = retrieveModule(errorHandlerFilePath, middlewareErr) || [];
+
   // get handlers
   if (config.socketHandlerFactory) {
     handlerFiles = retrieveFilesFromDir(path.join(rootPath, config.filesStructure.handlers));
     handlerFiles = handlerFiles.map((v) => v.module);
   }
+
   // get controllers
   controllerFiles = retrieveFilesFromDir(path.join(rootPath, config.filesStructure.controllers));
 
@@ -94,6 +97,7 @@ const socketLoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
     const io = new Server(httpServer, socketConfig);
 
     let socketHandlerFactory = null;
+
     if (config.socketHandlerFactory) {
       socketHandlerFactory = new config.socketHandlerFactory(io, handlerFiles);
     }
