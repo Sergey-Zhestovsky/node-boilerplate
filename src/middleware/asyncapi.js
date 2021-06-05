@@ -1,11 +1,11 @@
 const path = require('path');
-const { Express, static } = require('express');
+const express = require('express');
 
 const { Client404Error } = require('../libs/ClientError');
 const asyncapiConfig = require('../config/asyncapi/asyncapi.config');
 
 /**
- * @param {Express} app
+ * @param {express.Express} app
  * @param {() => Promise<string | null>} asyncapi
  */
 const asyncapiMiddleware = (app, asyncapi) => {
@@ -13,10 +13,10 @@ const asyncapiMiddleware = (app, asyncapi) => {
 
   app.use(
     '/asyncapi',
-    static(path.resolve(__dirname, '../../node_modules', '@asyncapi/html-template/template'), {
-      index: false,
-      extensions: ['css', 'js'],
-    })
+    express.static(
+      path.resolve(__dirname, '../../node_modules', '@asyncapi/html-template/template'),
+      { index: false, extensions: ['css', 'js'] }
+    )
   );
 
   const asyncapiPromise = asyncapi();
