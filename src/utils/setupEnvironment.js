@@ -3,6 +3,8 @@
 
 require('colors');
 
+const dotenv = require('dotenv');
+
 const { list: envVariables } = require('../data/env-variables.json');
 const env = require('../data/env.json');
 
@@ -17,7 +19,10 @@ const validateVariables = (configPath) => {
     if (process.env.NODE_ENV === env.TEST) configPath = `.env.test`;
   }
 
-  require('dotenv').config({ path: configPath });
+  dotenv.config({ path: `${configPath}.local` });
+  dotenv.config({ path: configPath });
+  dotenv.config({ path: '.env.local' });
+  dotenv.config({ path: '.env' });
 
   const allVariables = {};
   const missedVariables = [];

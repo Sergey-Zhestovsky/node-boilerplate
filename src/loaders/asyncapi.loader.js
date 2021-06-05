@@ -3,8 +3,6 @@ const path = require('path');
 const glob = require('glob');
 const yaml = require('js-yaml');
 const _ = require('lodash');
-const Generator = require('@asyncapi/generator');
-const parser = require('@asyncapi/parser');
 
 const logger = require('../libs/Logger');
 const asyncapiConfig = require('../config/asyncapi/asyncapi.config');
@@ -86,6 +84,8 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
     let validAsyncapi = null;
 
     try {
+      // optimization
+      const parser = require('@asyncapi/parser');
       validAsyncapi = await parser.parse(resAsyncapi);
     } catch (error) {
       logger.error(error);
@@ -93,6 +93,8 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
     }
 
     // create new static file, save it in memory
+    // optimization
+    const Generator = require('@asyncapi/generator');
     const generator = new Generator('@asyncapi/html-template', config.tempFileFolder, {
       entrypoint: 'index.html',
     });
