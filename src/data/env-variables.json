@@ -4,6 +4,9 @@
     "HOST",
     "DB_URL",
     "DB_NAME",
-    "SWAGGER_SERVER_URL"
+    "SWAGGER",
+    "SWAGGER_SERVER_URL",
+    "ASYNCAPI",
+    "ASYNCAPI_PUBLIC_URL"
   ]
 }
