@@ -7,11 +7,12 @@ const morgan = require('morgan');
 
 const logger = require('../libs/Logger');
 const queryMutator = require('./utils/queryMutator');
-const env = require('../data/env.json');
+const corsConfig = require('../config/cors.config');
+const helmetConfig = require('../config/helmet.config');
 
 const setupCors = () => {
-  if (process.env.NODE_ENV === env.PRODUCTION) return (req, res, next) => next();
-  return cors();
+  if (!corsConfig.withCors) return (req, res, next) => next();
+  return cors(corsConfig.config);
 };
 
 const mutateQuery = (req, res, next) => {
@@ -21,7 +22,7 @@ const mutateQuery = (req, res, next) => {
 
 module.exports = [
   setupCors(),
-  helmet(),
+  helmet(helmetConfig),
   bodyParser.urlencoded({ extended: false }),
   bodyParser.json({ limit: '150kb' }),
   cookieParser(),

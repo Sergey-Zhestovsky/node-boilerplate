@@ -1,6 +1,7 @@
 const express = require('express');
 
 const { routes, swagger, asyncapi } = require('./app');
+const { middleware: gqlMiddleware } = require('./apollo-server');
 const {
   entry,
   errorHandler,
@@ -15,6 +16,7 @@ asyncapiMiddleware(app, asyncapi);
 
 app.use(entry);
 app.use('/api/v1/', routes);
+app.use(gqlMiddleware);
 app.use(errorHandler);
 
 module.exports = app;

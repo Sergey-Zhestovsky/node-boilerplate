@@ -9,7 +9,7 @@ const asyncapiConfig = require('../config/asyncapi/asyncapi.config');
 
 const DEFAULT_CONFIG = {
   tempFileFolder: path.resolve(__dirname, '../../temp/temp-async-api'),
-  filePath: './socket/{docs/, namespaces/docs}',
+  filePath: './socket/{docs/,namespaces/docs}',
   fileName: '*asyncapi.@(yaml|yml|json)',
   style: '#asyncapi { min-height: 100vh; }',
   inMemory: true,

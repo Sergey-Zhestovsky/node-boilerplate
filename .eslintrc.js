@@ -126,7 +126,6 @@ module.exports = {
     'no-tabs': ERROR,
     'no-throw-literal': ERROR,
     'no-trailing-spaces': ERROR,
-    'no-undef': OFF,
     'no-undef-init': ERROR,
     'no-undefined': OFF,
     'no-underscore-dangle': ERROR,

@@ -1,6 +1,6 @@
 {
   "name": "boilerplate",
-  "version": "2.6.1",
+  "version": "2.7.0",
   "description": "",
   "main": "src/server.js",
   "scripts": {
@@ -17,6 +17,8 @@
     "@asyncapi/html-template": "~0.21.5",
     "@asyncapi/parser": "~1.5.1",
     "@types/node": "~15.12.1",
+    "apollo-server": "~2.25.0",
+    "apollo-server-express": "~2.25.0",
     "body-parser": "~1.19.0",
     "colors": "~1.4.0",
     "compression": "~1.7.4",
@@ -26,6 +28,7 @@
     "dotenv": "~10.0.0",
     "express": "~4.17.1",
     "glob": "~7.1.7",
+    "graphql": "~15.5.0",
     "helmet": "~4.6.0",
     "joi": "~17.4.0",
     "js-yaml": "~4.1.0",

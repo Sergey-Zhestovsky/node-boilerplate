@@ -7,7 +7,7 @@ const asyncAPILoader = require('../loaders/asyncapi.loader');
 module.exports = {
   routes: routerLoader(__dirname),
   swagger: swaggerLoader(__dirname),
-  graphql: graphqlLoader(__dirname),
+  graphql: graphqlLoader(__dirname, require('./utils/graphql/loaders')),
   socket: socketLoader(__dirname, {
     socketHandlerFactory: require('./utils/socket/SocketHandlerFactory'),
   }),
