@@ -99,7 +99,7 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
       entrypoint: 'index.html',
     });
 
-    fs.rmdirSync(config.tempFileFolder, { recursive: true });
+    fs.rmSync(config.tempFileFolder, { recursive: true, force: true });
     generator.asyncapi = validAsyncapi;
     await generator.generate(validAsyncapi);
 
@@ -114,7 +114,7 @@ const asyncAPILoader = (relativePath = __dirname, config = DEFAULT_CONFIG) => {
       });
 
     if (config.inMemory) {
-      fs.rmdirSync(config.tempFileFolder, { recursive: true });
+      fs.rmSync(config.tempFileFolder, { recursive: true, force: true });
       return { file: asyncapiHTML };
     }
 

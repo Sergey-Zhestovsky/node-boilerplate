@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-const { QueryDto } = require('../../../api/classes/dto');
+const { QueryDto } = require('../../../api/classes/Dto');
 
 class HealthCheckDto extends QueryDto {
   constructor({ withEnv = false }) {

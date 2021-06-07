@@ -1,5 +1,5 @@
-require('./utils/setupEnvironment')();
-require('./utils/setupProcess');
+require('./utils/setup-environment')();
+require('./utils/setup-process');
 
 const http = require('http');
 

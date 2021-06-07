@@ -1,9 +1,9 @@
 const Joi = require('joi');
 
-const { Dto } = require('../../api/classes/dto');
+const { Dto } = require('../../api/classes/Dto');
 const Validator = require('../../libs/Validator');
 const { Client400Error } = require('../../libs/ClientError');
-const classOf = require('../../utils/classOf');
+const classOf = require('../../utils/class-of');
 
 const validate = (requestProperty, errorMessage = (error) => error) => {
   /**

@@ -20,7 +20,7 @@ const run = async (args) => {
     return console.log(`Node environment should be one of '${Object.values(env).join(`', '`)}'.`);
   }
 
-  require('./setupEnvironment')(`.env.${environment}`);
+  require('./setup-environment')(`.env.${environment}`);
   const script = await require(`../scripts/${scriptName}`);
 
   if (!script) {

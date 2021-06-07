@@ -6,7 +6,7 @@ const compression = require('compression');
 const morgan = require('morgan');
 
 const logger = require('../libs/Logger');
-const queryMutator = require('./utils/queryMutator');
+const queryMutator = require('./utils/query-mutator');
 const corsConfig = require('../config/cors.config');
 const helmetConfig = require('../config/helmet.config');
 

@@ -1,4 +1,4 @@
 module.exports = {
-  isAuthorized: require('./isAuthorized'),
+  isAuthorized: require('./is-authorized'),
   ...require('./validate'),
 };

@@ -12,9 +12,9 @@ const DEFAULT_CONFIG = {
   filesStructure: {
     middleware: {
       path: '/middleware',
-      entryServerFile: 'entryServer.js',
-      entrySocketFile: 'entrySocket.js',
-      errorHandlerFile: 'errorHandler.js',
+      entryServerFile: 'entry-server.js',
+      entrySocketFile: 'entry-socket.js',
+      errorHandlerFile: 'error-handler.js',
     },
     handlers: '/handlers',
     controllers: '/controllers',
