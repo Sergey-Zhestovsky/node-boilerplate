@@ -17,7 +17,7 @@ module.exports = {
   plugins: ['jest', 'jsdoc'],
 
   parserOptions: {
-    ecmaVersion: 12,
+    ecmaVersion: 2020,
   },
 
   rules: {

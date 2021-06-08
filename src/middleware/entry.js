@@ -1,5 +1,5 @@
+const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const compression = require('compression');
@@ -23,8 +23,8 @@ const mutateQuery = (req, res, next) => {
 module.exports = [
   setupCors(),
   helmet(helmetConfig),
-  bodyParser.urlencoded({ extended: false }),
-  bodyParser.json({ limit: '150kb' }),
+  express.urlencoded({ extended: false }),
+  express.json({ limit: '150kb' }),
   cookieParser(),
   compression(),
   morgan(logger.middlewareOutput, { stream: logger.stream() }),
