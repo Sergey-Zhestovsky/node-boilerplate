@@ -28,3 +28,5 @@ const main = async (process) => {
 
 main(process);
 module.exports = main;
+
+require('./api/rbac');

@@ -20,7 +20,7 @@ class Controller {
    * @typedef {Object} RoleSchema
    *   @property {string} descriptor
    *   @property {string} name
-   *   @property {string[]} inherits
+   *   @property {string[] | null} inherits
    *   @property {string[]} actions
    *
    * @param {Object<string, RoleSchema>} roleSchemasObj
@@ -31,6 +31,8 @@ class Controller {
     const actions = new Map();
     /** @type {Map<RoleSchema, RoleSchema[]} */
     const rolesGraph = new Map();
+    /** @type {Map<string, Role[]} */
+    const rolesMap = new Map();
     /** @type {RoleSchema | null} */
     let root = null;
 
@@ -47,10 +49,10 @@ class Controller {
       });
 
       const inheritance = roleSchema.inherits
-        .map((descriptor) => roleSchemas.find((r) => r.descriptor === descriptor) ?? null)
+        ?.map((descriptor) => roleSchemas.find((r) => r.descriptor === descriptor) ?? null)
         .filter((v) => v !== null);
 
-      rolesGraph.set(roleSchema, inheritance);
+      rolesGraph.set(roleSchema, inheritance ?? []);
     });
 
     // get root element from graph
@@ -69,20 +71,36 @@ class Controller {
      * @param {string[]} metNodes
      * @returns {Role}
      */
-    const walkToBuildRoles = (role, metNodes) => {
+    const walkToBuildRoles = (role, metNodes, unstackArray = []) => {
       if (metNodes.includes(role.descriptor)) {
         throw new Error(`Role tree cannot be recursive, element: '${role.descriptor}' found twice`);
       }
 
       metNodes.push(role.descriptor);
+      unstackArray.push(role.descriptor);
       const inheritance = rolesGraph.get(role);
       let inherits = [];
 
       if (inheritance.length) {
-        inherits = inheritance.map((roleSchema) => walkToBuildRoles(roleSchema, metNodes));
+        inherits = inheritance
+          .map((roleSchema) => {
+            if (rolesMap.has(roleSchema.descriptor)) return null;
+            return walkToBuildRoles(roleSchema, metNodes, unstackArray);
+          })
+          .filter((v) => v !== null);
       }
 
-      return new Role(null, role.descriptor, role.name, inherits, getActionsByList(role.actions));
+      const index = unstackArray.indexOf(role.descriptor);
+      unstackArray.splice(index, 1);
+      const res = new Role(
+        null,
+        role.descriptor,
+        role.name,
+        inherits,
+        getActionsByList(role.actions)
+      );
+      rolesMap.set(res.descriptor, res);
+      return res;
     };
 
     const metNodes = [];
@@ -97,15 +115,7 @@ class Controller {
       );
     }
 
-    // normalize tree
-    /**
-     * @param {Role} role
-     */
-    const walkToNormalize = (role) => {
-      if (role.)
-    };
-
-    this.roles = [];
+    this.roles = [...rolesMap.values()];
     this.actions = [...actions.values()];
     this.initialize = true;
   }
@@ -117,10 +127,20 @@ class Controller {
   }
 
   /**
-   * Walk through Role tree
-   * @param {(Role) => void} callback
+   * Pre-order walk through Role tree
+   * @param {(role: Role) => void} callback
    */
-  goTrough(callback) {}
+  preOrderWalkTrough(callback) {
+    this.root.preOrderWalk(callback);
+  }
+
+  /**
+   * Post-order walk through Role tree
+   * @param {(role: Role) => void} callback
+   */
+  postOrderWalkTrough(callback) {
+    this.root.postOrderWalk(callback);
+  }
 
   getAction(actinName) {}
 

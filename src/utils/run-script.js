@@ -11,13 +11,13 @@ const env = require('../data/env.json');
 const run = async (args) => {
   const passedArgs = args.slice(2);
   const scriptName = passedArgs.splice(0, 1);
-  const environment = passedArgs[passedArgs.length - 1];
+  let environment = passedArgs[passedArgs.length - 1];
 
   if (!scriptName) return console.log('Script name is required.');
-  if (!environment) return console.log('Node environment is required.');
 
-  if (!Object.values(env).includes(environment)) {
-    return console.log(`Node environment should be one of '${Object.values(env).join(`', '`)}'.`);
+  if (!environment || !Object.values(env).includes(environment)) {
+    console.log(`Node environment is not passed. Assumes '${env.DEVELOPMENT}' as default environment.\n`.yellow);
+    environment = env.DEVELOPMENT;
   }
 
   require('./setup-environment')(`.env.${environment}`);
@@ -28,7 +28,7 @@ const run = async (args) => {
   }
 
   const result = await script();
-  console.log(`${`Script result:`.cyan}\n${result}`);
+  if (result !== undefined) console.log(`${`Script result:`.cyan}\n${result}`);
   console.log();
   process.exit(0);
 };

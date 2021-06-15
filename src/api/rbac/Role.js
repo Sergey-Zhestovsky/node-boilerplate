@@ -1,6 +1,7 @@
 const Action = require('./Action');
+const Tree = require('../classes/Tree');
 
-class Role {
+class Role extends Tree {
   /**
    * @param {string} [id]
    * @param {string} descriptor
@@ -8,17 +9,19 @@ class Role {
    * @param {Role} [inherits]
    * @param {Action[]} [actions]
    */
-  constructor(id, descriptor, name, inherits, actions) {
+  constructor(id, descriptor, name, inherits = [], actions = []) {
+    super(inherits);
+
     /** @type {string | null} */
     this.id = id ?? null;
     /** @type {string} */
     this.descriptor = descriptor;
     /** @type {string} */
     this.name = name;
-    /** @type {Role | null} */
-    this.inherits = inherits ?? null;
+    /** @type {Role[]} @readonly */
+    this.inherits = inherits;
     /** @type {Action[]} */
-    this.actions = actions ?? [];
+    this.actions = actions;
   }
 
   get Synchronized() {
