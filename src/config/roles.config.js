@@ -77,6 +77,14 @@ exports.prePreStuff = {
 exports.prePostStuff = {
   descriptor: 'PRE_POST_STUFF',
   name: 'admin',
+  inherits: ['PRE_POST_POST_STUFF'],
+  actions: ['admin_panel-bool'],
+};
+
+/** @type {RoleSchema} */
+exports.prePostPostStuff = {
+  descriptor: 'PRE_POST_POST_STUFF',
+  name: 'admin',
   inherits: null,
   actions: ['admin_panel-bool'],
 };
