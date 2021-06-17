@@ -3,10 +3,10 @@
  * @typedef {String} Action
  *
  * @typedef {Object} RoleSchema
- *   @property {RoleDescriptor} descriptor
- *   @property {string} name
- *   @property {RoleDescriptor[] | null} inherits
- *   @property {Action[]} actions
+ *   @property {RoleDescriptor} descriptor - unique name in system
+ *   @property {string} name - user friendly name
+ *   @property {RoleDescriptor[] | null} inherits - array of role's descriptors inherited by the current role
+ *   @property {Action[]} actions - array of action's names
  */
 
 /** @type {RoleSchema} */

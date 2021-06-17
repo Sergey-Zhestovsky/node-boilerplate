@@ -13,6 +13,10 @@ class Action {
   get Synchronized() {
     return this.id !== null;
   }
+
+  synchronize({ id }) {
+    this.id = id;
+  }
 }
 
 module.exports = Action;

@@ -25,8 +25,6 @@ const COLORS = [
   'brightWhite',
 ];
 
-// TODO: give every node own color
-
 const printTree = (roleTree) => {
   const printLayers = (rolesLayer, nodeCount, iterator, resultIndexes) => {
     const symbolsInNode = nodeCount.toString().length;
@@ -84,13 +82,13 @@ const printRoleData = (indexedRoles) => {
 
   for (const descriptor in indexedRoles) {
     const { iterator, role, color } = indexedRoles[descriptor];
-    const inheritance = [];
-    const actions = [];
 
+    const actions = [];
+    actions.push(...role.getAllActions().map((a) => a.name));
+
+    const inheritance = [];
     role.preOrderWalk((r) => {
-      actions.push(...r.actions.map((a) => a.name));
-      if (role === r) return;
-      inheritance.push(r.descriptor[r.color]);
+      if (role !== r) inheritance.push(r.descriptor[r.color]);
     });
 
     table.push([

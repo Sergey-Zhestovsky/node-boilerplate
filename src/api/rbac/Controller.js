@@ -122,7 +122,11 @@ class Controller {
 
   async synchronize() {
     if (!this.initialized) return;
-    // ...
+    // TODO: connect and synchronize with db
+    // Rules: if action changed, added or removed - synchronize;
+    // if role added - synchronize;
+    // if role changed or removed - if role did not used: accept otherwise reject.
+    // Also, set `synchronized` for every role and action.
     this.synchronized = true;
   }
 
@@ -142,15 +146,52 @@ class Controller {
     this.root.postOrderWalk(callback);
   }
 
-  getAction(actinName) {}
+  /**
+   * Get action by name
+   * @param {string} actinName
+   * @returns {Action | null}
+   */
+  getAction(actinName) {
+    return this.actions.find((a) => a.name === actinName) ?? null;
+  }
 
-  getRole(roleDescriptor) {}
+  /**
+   * Get role by name
+   * @param {string} roleDescriptor
+   * @returns {Role | null}
+   */
+  getRole(roleDescriptor) {
+    return this.roles.find((r) => r.descriptor === roleDescriptor) ?? null;
+  }
 
-  find() {}
+  /**
+   * Check for permission of `current role` relative to `target role` based of inheritance tree.
+   * For example, if `current role` inherits `target role` then permission accepted.
+   * Otherwise, if `target role` inherits `current role` then `current role` stays lover in tree and
+   *  permission will be denied.
+   * @param {Role | string} currentRole
+   * @param {Role | string} targetRole
+   * @returns {boolean}
+   */
+  permitByRole(currentRole, targetRole) {
+    const cRole = typeof currentRole === 'string' ? this.getRole(currentRole) : currentRole;
+    const tRole = typeof targetRole === 'string' ? this.getRole(targetRole) : targetRole;
+    if (!cRole || !tRole) return false;
+    return cRole.include(tRole);
+  }
 
-  permitByRole(currentRole, targetRole) {}
-
-  permitByAction(currentAction, targetAction) {}
+  /**
+   * Can `current role` access particular action.
+   * @param {Role | string} currentRole
+   * @param {Action | string} action
+   * @returns {boolean}
+   */
+  permitByAction(currentRole, action) {
+    const cRole = typeof currentRole === 'string' ? this.getRole(currentRole) : currentRole;
+    const cAction = typeof action === 'string' ? this.getAction(action) : action;
+    if (!cRole || !cAction) return false;
+    return cRole.can(cAction);
+  }
 
   permitByStrategy(currentRole, strategy) {
     // waterfall
