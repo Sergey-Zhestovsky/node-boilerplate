@@ -1,8 +1,6 @@
-const Controller = require('./Controller');
+const RbacController = require('./RbacController');
 
-const rbac = new Controller();
+const rbac = new RbacController();
 rbac.initialize();
 
 module.exports = rbac;
-
-console.log(rbac.root.inherits[0].contain('USER'));

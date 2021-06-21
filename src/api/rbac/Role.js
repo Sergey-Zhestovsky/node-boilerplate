@@ -44,7 +44,7 @@ class Role extends Tree {
   }
 
   /**
-   * If current role contains provided role in the tree
+   * If current role contains provided role in the tree (without current)
    * @param {Role | string} role
    * @returns {boolean}
    */
@@ -55,7 +55,7 @@ class Role extends Tree {
   }
 
   /**
-   * If current role equals or contains provided role in the tree
+   * If current role equals or contains provided role in the tree (with current)
    * @param {Role | string} role
    * @returns {boolean}
    */
