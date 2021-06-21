@@ -1,5 +1,6 @@
 const Role = require('./Role');
 const Action = require('./Action');
+const PermissionStrategies = require('./PermissionStrategies');
 const roleSchemaConfig = require('../../config/roles.config');
 const logger = require('../../libs/Logger');
 
@@ -11,6 +12,8 @@ class Controller {
     this.roles = [];
     /** @type {Action[]} */
     this.actions = [];
+
+    this.permissionStrategies = new PermissionStrategies(this.root);
 
     this.initiated = false;
     this.synchronized = false;
@@ -105,6 +108,7 @@ class Controller {
 
     const metNodes = [];
     this.root = walkToBuildRoles(root, metNodes);
+    this.permissionStrategies.root = this.root;
 
     // metNodes might be unequal to roleSchemas[].descriptor
     if (metNodes.length !== roleSchemas.length) {
@@ -193,11 +197,17 @@ class Controller {
     return cRole.can(cAction);
   }
 
-  permitByStrategy(currentRole, strategy) {
-    // waterfall
-    // grand-waterfall
-    // restrict
-    // fully-restrict
+  /**
+   * Check for user permission based on permission strategies.
+   * @param {string} strategy
+   * @param {Role | string} currentRole
+   * @param {Role | string} targetRole
+   * @param {any} options
+   */
+  permitByStrategy(strategy, currentRole, targetRole, options) {
+    const cRole = typeof currentRole === 'string' ? currentRole : currentRole.descriptor;
+    const tRole = typeof targetRole === 'string' ? targetRole : targetRole.descriptor;
+    return this.permissionStrategies.getStrategy(strategy)(cRole, tRole, options);
   }
 }
 
