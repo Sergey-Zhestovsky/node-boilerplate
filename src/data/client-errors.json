@@ -3,35 +3,30 @@
     "code": "000",
     "type": "InternalServerError",
     "status": 500,
-    "title": "Internal server error",
     "message": "Internal server error."
   },
   "ValidationError": {
     "code": "001",
     "type": "ValidationError",
     "status": 400,
-    "title": "Validation error",
     "message": "Bad request."
   },
   "AuthorizationError": {
     "code": "002",
     "type": "AuthorizationError",
     "status": 401,
-    "title": "Authorization error",
     "message": "Access denied: not authorized."
   },
   "PrivilegeError": {
     "code": "003",
     "type": "PrivilegeError",
     "status": 403,
-    "title": "Forbidden",
     "message": "Access denied: wrong privilege."
   },
   "NotFound": {
     "code": "004",
     "type": "NotFound",
     "status": 404,
-    "title": "Not found",
     "message": "Not found."
   }
 }

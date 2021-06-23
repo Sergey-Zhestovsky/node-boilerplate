@@ -1,17 +1,7 @@
-const serverErrors = require('../data/server-errors.json');
+const trimObject = require('../utils/trim-object');
+const clientErrors = require('../data/client-errors.json');
 
 class ClientError extends Error {
-  constructor({ code, type, status, title, message }) {
-    super(title);
-
-    this.code = code || ClientError.Errors.InternalServerError.code;
-    this.type = type || ClientError.Errors.InternalServerError.type;
-    this.status = status || ClientError.Errors.InternalServerError.status;
-    this.title = title || ClientError.Errors.InternalServerError.title;
-    this.message = message;
-    this.date = new Date().toISOString();
-  }
-
   static create(error, description) {
     if (error instanceof ClientError) {
       return error;
@@ -34,18 +24,34 @@ class ClientError extends Error {
   }
 
   static get Errors() {
-    return serverErrors;
+    return clientErrors;
   }
 
-  getError() {
+  constructor({ code, type, status, title, message, description }) {
+    super(title);
+
+    this.code = code ?? ClientError.Errors.InternalServerError.code;
+    this.type = type ?? ClientError.Errors.InternalServerError.type;
+    this.status = status ?? ClientError.Errors.InternalServerError.status;
+    this.message = message ?? null;
+    this.description = description ?? null;
+    this.date = new Date().toISOString();
+  }
+
+  /** @protected */
+  getRawError() {
     return {
       code: this.code,
       type: this.type,
       status: this.status,
-      title: this.title,
       message: this.message,
+      description: this.description,
       date: this.date,
     };
+  }
+
+  getError() {
+    return trimObject(this.getRawError());
   }
 }
 

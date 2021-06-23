@@ -7,4 +7,10 @@ module.exports = {
   console: {
     blackListModes: [env.TEST],
   },
+  fileTransport: {
+    datePattern: 'DD-MM-YYYY',
+    maxFiles: '90d',
+    maxSize: '20m',
+    zippedArchive: true,
+  },
 };

@@ -7,12 +7,12 @@ describe('Validator', () => {
       name: Joi.string(),
     }));
 
-    const { error: firstError } = validator.validate({
+    const { errors: firstError } = validator.validate({
       name: 'test',
     });
     expect(firstError).toBeNull();
 
-    const { error: secondError } = validator.validate({
+    const { errorMessage: secondError } = validator.validate({
       name: 42,
     });
     expect(typeof secondError).toBe('string');
@@ -22,12 +22,12 @@ describe('Validator', () => {
     const validator = new Validator();
     validator.setSchema(['name']);
 
-    const { error: firstError } = validator.validate({
+    const { errors: firstError } = validator.validate({
       name: 'test',
     });
     expect(firstError).toBeNull();
 
-    const { error: secondError } = validator.validate({
+    const { errorMessage: secondError } = validator.validate({
       age: 42,
     });
     expect(typeof secondError).toBe('string');

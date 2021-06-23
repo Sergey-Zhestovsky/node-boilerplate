@@ -1,4 +1,4 @@
-const { ClientError, Client404Error, Client500Error } = require('../libs/ClientError');
+const { ClientError, Client404Error } = require('../libs/ClientError');
 const { ClientRedirection } = require('../libs/ClientRedirection');
 const ServerError = require('../libs/ServerError');
 const logger = require('../libs/Logger');
@@ -15,14 +15,11 @@ const clientError = (error, req, res, next) => {
 };
 
 const serverError = (error, req, res, next) => {
-  const err = new ServerError(error);
-  logger.error(`Unhandled error: '${err.name}': '${err.message}'.\n${err.stack}`);
-
-  if (process.env.NODE_ENV === env.DEVELOPMENT) {
-    return res.status(500).return(null, err.getError());
-  }
-
-  return res.throw(new Client500Error());
+  const err = ServerError.create(error);
+  err.correlate();
+  logger.error(`Unhandled server error: '${err.name}': '${err.message}'.\n${err.stack}`);
+  if (process.env.NODE_ENV !== env.DEVELOPMENT) err.removeStack();
+  return res.throw(err);
 };
 
 module.exports = [client404Error, clientError, serverError];

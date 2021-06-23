@@ -17,8 +17,11 @@ const validate = (requestProperty, errorMessage = (error) => error) => {
     validator.setSchema(isDto ? schema.validator : schema, validationConfig);
 
     return (req, res, next) => {
-      const { value, error } = validator.validate(req[requestProperty]);
-      if (error) return next(new Client400Error(errorMessage(error)));
+      const { value, errors, errorMessage: em } = validator.validate(req[requestProperty]);
+
+      if (errors) {
+        return next(new Client400Error({ message: errorMessage(em), description: errors }));
+      }
 
       if (isDto && replaceContent === undefined) {
         const DtoSchema = schema;

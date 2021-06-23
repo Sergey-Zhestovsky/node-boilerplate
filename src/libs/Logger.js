@@ -9,36 +9,11 @@ const DailyRotateFile = require('winston-daily-rotate-file');
 const loggerConfig = require('../config/logger.config');
 
 class Logger {
-  constructor(logPath = loggerConfig.logPath) {
-    this.winston = Logger.buildLogger({ logPath });
-    this.debug = debug('app');
-  }
-
   static get Info() {
     return {
       message: Symbol.for('message'),
       level: Symbol.for('level'),
     };
-  }
-
-  static buildLogger({ logPath, parseArgs = true, logInConsole = true } = {}) {
-    const transports = [];
-
-    if (logPath) {
-      transports.push(Logger.getDebugTransport(logPath));
-      transports.push(Logger.getInfoTransport(logPath));
-      transports.push(Logger.getWarnTransport(logPath));
-      transports.push(Logger.getErrorTransport(logPath));
-    }
-
-    if (logInConsole && !loggerConfig.console.blackListModes.includes(process.env.NODE_ENV)) {
-      transports.push(Logger.getConsoleTransport());
-    }
-
-    return winston.createLogger({
-      format: winston.format.printf((info) => info),
-      transports,
-    });
   }
 
   static assembleLogOutput(info, parseArgs = true, getTime = (timestamp) => timestamp) {
@@ -66,6 +41,15 @@ class Logger {
     return winston.format.combine(winston.format.timestamp(), winston.format.printf(printf));
   }
 
+  static getFileTransport(logPath, level, config = loggerConfig.fileTransport) {
+    return new DailyRotateFile({
+      filename: path.join(logPath, level, `${level}-%DATE%.log`),
+      level,
+      format: Logger.getFormat(),
+      ...config,
+    });
+  }
+
   static getDebugTransport(logPath) {
     return Logger.getFileTransport(logPath, 'debug');
   }
@@ -80,24 +64,6 @@ class Logger {
 
   static getErrorTransport(logPath) {
     return Logger.getFileTransport(logPath, 'error');
-  }
-
-  static getFileTransport(
-    logPath,
-    level,
-    config = {
-      datePattern: 'DD-MM-YYYY',
-      maxFiles: '90d',
-      maxSize: '20m',
-      zippedArchive: true,
-    }
-  ) {
-    return new DailyRotateFile({
-      filename: path.join(logPath, level, `${level}-%DATE%.log`),
-      level,
-      format: Logger.getFormat(),
-      ...config,
-    });
   }
 
   static getConsoleTransport(parseArgs = true) {
@@ -116,6 +82,31 @@ class Logger {
         winston.format.colorize({ all: true })
       ),
     });
+  }
+
+  static buildLogger({ logPath, parseArgs = true, logInConsole = true } = {}) {
+    const transports = [];
+
+    if (logPath) {
+      transports.push(Logger.getDebugTransport(logPath));
+      transports.push(Logger.getInfoTransport(logPath));
+      transports.push(Logger.getWarnTransport(logPath));
+      transports.push(Logger.getErrorTransport(logPath));
+    }
+
+    if (logInConsole && !loggerConfig.console.blackListModes.includes(process.env.NODE_ENV)) {
+      transports.push(Logger.getConsoleTransport());
+    }
+
+    return winston.createLogger({
+      format: winston.format.printf((info) => info),
+      transports,
+    });
+  }
+
+  constructor(logPath = loggerConfig.logPath) {
+    this.winston = Logger.buildLogger({ logPath });
+    this.debug = debug('app');
   }
 
   get middlewareOutput() {

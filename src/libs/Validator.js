@@ -1,5 +1,7 @@
 const Joi = require('joi');
 
+const validationErrorMessages = require('../data/validation-errors.json');
+
 class Validator {
   constructor() {
     this.schema = null;
@@ -22,11 +24,18 @@ class Validator {
    * @param {Joi.ValidationOptions} config
    */
   setConfig(config) {
-    const { required = true, ...rest } = config;
+    const { required = true, messages = {}, errors = {}, ...rest } = config;
+
     const validatorConfig = {
       presence: required ? 'required' : 'optional',
+      messages: { ...validationErrorMessages, ...messages },
+      errors: {
+        wrap: { label: `'` },
+        ...errors,
+      },
       ...rest,
     };
+
     this.config = { ...this.config, ...validatorConfig };
   }
 
@@ -58,20 +67,28 @@ class Validator {
 
   validate(data) {
     let result = null;
-    let error = null;
+    let errors = null;
+    let errorMessage = null;
 
     if (this.schema) {
       result = this.schema.validate(data, this.config);
     }
 
-    if (result && result.error) {
-      error = result.error.details
-        .map((detail) => detail.message)
-        .join(' | ')
-        .replace(/"/g, `'`);
+    if (result.error) {
+      errors = {};
+      errorMessage = result.error.details
+        .map((detail) => {
+          errors[detail.context.key] = detail.message;
+          return detail.message;
+        })
+        .join(' | ');
     }
 
-    return { value: result.value, error };
+    return {
+      value: errors ? null : result.value ?? null,
+      errors: errors,
+      errorMessage: errorMessage,
+    };
   }
 }
 
