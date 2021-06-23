@@ -70,6 +70,33 @@ const printTree = (roleTree) => {
   return resultIndexes;
 };
 
+const printStepTree = (roleTree) => {
+  const printBranch = (role, branch) => {
+    const isGraphHead = branch.length === 0;
+    let branchHead = '';
+    let baseBranch = branch;
+
+    if (!isGraphHead) branchHead = role.inherits.length === 0 ? '─ ' : '┬ ';
+    console.log(`${branch}${branchHead}${role.descriptor[role.color]}`);
+
+    if (!isGraphHead) {
+      const isChildOfLastBranch = branch.slice(-2) === '└─';
+      baseBranch = branch.slice(0, -2) + (isChildOfLastBranch ? '  ' : '│ ');
+    }
+
+    const nextBranch = `${baseBranch}├─`;
+    const lastBranch = `${baseBranch}└─`;
+
+    role.inherits.forEach((child, index) => {
+      printBranch(child, role.inherits.length - 1 === index ? lastBranch : nextBranch);
+    });
+  };
+
+  console.log('=========== Role Steps Tree ===========\n'.cyan);
+  printBranch(roleTree, '');
+  console.log();
+};
+
 const printRoleData = (indexedRoles) => {
   console.log('=========== Role Table Data ===========\n'.cyan);
 
@@ -130,6 +157,7 @@ const printRBAC = () => {
 
   walk(rbac.root, 0);
   const indexedRoles = printTree(rbac);
+  printStepTree(rbac.root);
   printRoleData(indexedRoles);
 };
 
