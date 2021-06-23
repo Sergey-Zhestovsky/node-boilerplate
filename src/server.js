@@ -3,8 +3,8 @@ require('./utils/setup-process');
 
 const http = require('http');
 
-const { socket } = require('./app');
 const app = require('./express');
+const { socket } = require('./app');
 const db = require('./api/database');
 const rbac = require('./api/rbac');
 const logger = require('./libs/Logger');
@@ -29,6 +29,3 @@ const main = async (process) => {
 };
 
 main(process);
-module.exports = main;
-
-require('./api/rbac');

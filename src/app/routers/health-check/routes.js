@@ -1,4 +1,4 @@
-const expressRouter = require('../../utils/routers/router');
+const { Router: expressRouter } = require('express');
 const { pingController, healthController } = require('./controllers');
 const {
   validators: { validateQuery },
