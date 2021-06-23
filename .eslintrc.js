@@ -17,7 +17,7 @@ module.exports = {
   plugins: ['jest', 'jsdoc'],
 
   parserOptions: {
-    ecmaVersion: 12,
+    ecmaVersion: 2020,
   },
 
   rules: {
@@ -184,7 +184,7 @@ module.exports = {
 
   overrides: [
     {
-      files: '**/*.test.js',
+      files: ['**/*.test.js', 'src/scripts/*'],
       rules: {
         'node/no-unpublished-require': OFF,
         'node/no-missing-require': OFF,

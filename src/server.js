@@ -6,11 +6,13 @@ const http = require('http');
 const { socket } = require('./app');
 const app = require('./express');
 const db = require('./api/database');
+const rbac = require('./api/rbac');
 const logger = require('./libs/Logger');
 
 const main = async (process) => {
   try {
     await db.connection.connect();
+    await rbac.synchronize();
 
     const server = http.createServer(app);
     socket(server);
@@ -28,3 +30,5 @@ const main = async (process) => {
 
 main(process);
 module.exports = main;
+
+require('./api/rbac');
