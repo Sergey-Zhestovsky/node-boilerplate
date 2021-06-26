@@ -62,7 +62,7 @@ module.exports = {
     'jsdoc/no-undefined-types': WARN,
     'key-spacing': OFF,
     'keyword-spacing': [ERROR, { after: true, before: true }],
-    'linebreak-style': ERROR,
+    'linebreak-style': OFF, // ERROR
     'lines-around-comment': OFF, // [ERROR, { allowBlockEnd: false, allowObjectEnd: false, allowArrayEnd: false, allowClassEnd: false }]
     'lines-between-class-members': ERROR,
     'max-classes-per-file': OFF, // [ERROR, 1]
