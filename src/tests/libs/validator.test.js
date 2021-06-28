@@ -7,29 +7,33 @@ describe('Validator', () => {
       name: Joi.string(),
     }));
 
-    const { errors: firstError } = validator.validate({
+    const firstRes = validator.validate({
       name: 'test',
     });
-    expect(firstError).toBeNull();
+    expect(firstRes).not.toBeNull();
+    expect(firstRes.errors).toBeNull();
 
-    const { errorMessage: secondError } = validator.validate({
+    const secondRes = validator.validate({
       name: 42,
     });
-    expect(typeof secondError).toBe('string');
+    expect(secondRes).not.toBeNull();
+    expect(typeof secondRes.errorMessage).toBe('string');
   });
 
   test('validate trough array', () => {
     const validator = new Validator();
     validator.setSchema(['name']);
 
-    const { errors: firstError } = validator.validate({
+    const firstRes = validator.validate({
       name: 'test',
     });
-    expect(firstError).toBeNull();
+    expect(firstRes).not.toBeNull();
+    expect(firstRes.errors).toBeNull();
 
-    const { errorMessage: secondError } = validator.validate({
+    const secondRes = validator.validate({
       age: 42,
     });
-    expect(typeof secondError).toBe('string');
+    expect(secondRes).not.toBeNull();
+    expect(typeof secondRes.errorMessage).toBe('string');
   });
 });

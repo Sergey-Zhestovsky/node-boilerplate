@@ -66,13 +66,11 @@ class Validator {
   }
 
   validate(data) {
-    let result = null;
+    if (!this.schema) return null;
+
+    const result = this.schema.validate(data, this.config);
     let errors = null;
     let errorMessage = null;
-
-    if (this.schema) {
-      result = this.schema.validate(data, this.config);
-    }
 
     if (result.error) {
       errors = {};

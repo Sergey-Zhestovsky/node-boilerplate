@@ -2,7 +2,7 @@ const Joi = require('joi');
 const { Server, Socket } = require('socket.io');
 
 const Validator = require('../../../libs/Validator');
-const { Client400Error } = require('../../../libs/ClientError');
+const { Client400Error, Client500Error } = require('../../../libs/ClientError');
 const SocketHandler = require('./SocketHandler');
 
 class SocketHandlerFactory {
@@ -31,7 +31,7 @@ class SocketHandlerFactory {
         handler.handle(...validatedPayloads);
       };
 
-      socket.on(handler.Event, handleFn);
+      socket.on(handler.Event.Name, handleFn);
     });
   }
 
@@ -39,6 +39,7 @@ class SocketHandlerFactory {
    * @param {SocketHandler} handler
    * @param {any[]} payloads
    * @returns {any[]} - validated payloads
+   * @throws {Client500Error}
    * @throws {Client400Error}
    */
   static validatePayloads(handler, payloads) {
@@ -51,18 +52,20 @@ class SocketHandlerFactory {
       validationSchema.forEach((schema, i) => {
         if (schema) {
           validator.setSchema(schema);
-          const { value, error } = validator.validate(payloads[i]);
-          if (error) throw new Client400Error(`Bad payload: ${error}`);
-          result[i] = value;
+          const vRes = validator.validate(payloads[i]);
+          if (vRes === null) throw new Client500Error();
+          if (vRes.errors) throw new Client400Error(`Bad payload: ${vRes.errorMessage ?? ''}`);
+          result[i] = vRes.value;
         } else {
           result[i] = payloads[i];
         }
       });
     } else {
       validator.setSchema(validationSchema);
-      const { value, error } = validator.validate(payloads[0]);
-      if (error) throw new Client400Error(`Bad payload: ${error}`);
-      result[0] = value;
+      const vRes = validator.validate(payloads[0]);
+      if (vRes === null) throw new Client500Error();
+      if (vRes.errors) throw new Client400Error(`Bad payload: ${vRes.errorMessage ?? ''}`);
+      result[0] = vRes.value;
     }
 
     return result;

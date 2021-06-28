@@ -1,3 +1,5 @@
+const { Server } = require('socket.io');
+
 const Room = require('./Room');
 
 class SocketEvent {
@@ -21,24 +23,31 @@ class SocketEvent {
     return this.Name;
   }
 
-  /** @returns {Room | null} */
+  /** @returns {typeof Room | null} */
   static get Room() {
     return new this().Room;
   }
 
-  /** @returns {Room | null} */
-  static getRoom() {
-    return new this().Room;
+  /**
+   * @param {Server} server
+   * @returns {Room | null}
+   */
+  static getRoom(server) {
+    return new this().getRoom(server);
   }
 
-  /** @returns {Room | null} */
+  /** @returns {typeof Room | null} */
   get Room() {
     return null;
   }
 
-  /** @returns {Room | null} */
-  getRoom() {
-    return this.Room;
+  /**
+   * @param {Server} server
+   * @returns {Room | null}
+   */
+  getRoom(server) {
+    const EventRoom = this.Room;
+    return EventRoom ? new EventRoom(server) : null;
   }
 
   /** @returns {string} */

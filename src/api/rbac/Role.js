@@ -28,8 +28,12 @@ class Role extends Tree {
     return this.id !== null;
   }
 
-  synchronize({ id }) {
-    this.id = id;
+  /**
+   * @param {{ id: string } | string} id
+   */
+  synchronize(id) {
+    if (id instanceof Object) this.id = id.id;
+    else this.id = id;
   }
 
   /**
@@ -78,7 +82,7 @@ class Role extends Tree {
    * @returns {boolean}
    */
   hasAction(action) {
-    const actionName = typeof role === 'string' ? action : action.name;
+    const actionName = typeof action === 'string' ? action : action.name;
     return !!this.actions.find((a) => a.name === actionName);
   }
 

@@ -84,7 +84,7 @@ class Logger {
     });
   }
 
-  static buildLogger({ logPath, parseArgs = true, logInConsole = true } = {}) {
+  static buildLogger(logPath, logInConsole = true) {
     const transports = [];
 
     if (logPath) {
@@ -105,7 +105,7 @@ class Logger {
   }
 
   constructor(logPath = loggerConfig.logPath) {
-    this.winston = Logger.buildLogger({ logPath });
+    this.winston = Logger.buildLogger(logPath);
     this.debug = debug('app');
   }
 

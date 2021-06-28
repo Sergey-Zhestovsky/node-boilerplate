@@ -6,11 +6,11 @@ class ClientError extends Error {
     if (error instanceof ClientError) {
       return error;
     } else if (error instanceof Error) {
-      return new ClientError({ title: error.name, message: description || error.message });
-    } else if (error instanceof String) {
-      return new ClientError({ name: error, message: description || error });
+      return new ClientError({ message: description || error.message });
     } else if (error instanceof Object) {
       return new ClientError({ ...error, message: description || error.message });
+    } else if (typeof error === 'string') {
+      return new ClientError({ message: description || error });
     }
 
     return new ClientError({ message: description });

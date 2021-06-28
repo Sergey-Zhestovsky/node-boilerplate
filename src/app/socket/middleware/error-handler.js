@@ -9,13 +9,13 @@ const env = require('../../../data/env.json');
 const handleError = (error, socket) => {
   if (error instanceof ClientError) {
     socket.emit('error', error.getError());
-    if (error instanceof Client401Error) socket.disconnet();
+    if (error instanceof Client401Error) socket.disconnect();
     return;
   }
 
   if (error instanceof ClientRedirection) {
     socket.emit('error', error.getRedirection());
-    socket.disconnet();
+    socket.disconnect();
     return;
   }
 

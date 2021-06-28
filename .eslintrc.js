@@ -62,7 +62,7 @@ module.exports = {
     'jsdoc/no-undefined-types': WARN,
     'key-spacing': OFF,
     'keyword-spacing': [ERROR, { after: true, before: true }],
-    'linebreak-style': ERROR,
+    'linebreak-style': OFF,
     'lines-around-comment': OFF, // [ERROR, { allowBlockEnd: false, allowObjectEnd: false, allowArrayEnd: false, allowClassEnd: false }]
     'lines-between-class-members': ERROR,
     'max-classes-per-file': OFF, // [ERROR, 1]
@@ -131,7 +131,14 @@ module.exports = {
     'no-underscore-dangle': ERROR,
     'no-unmodified-loop-condition': ERROR,
     'no-unneeded-ternary': ERROR,
-    'no-unused-expressions': ERROR,
+    'no-unused-expressions': [
+      ERROR,
+      {
+        allowShortCircuit: true,
+        allowTernary: true,
+        allowTaggedTemplates: true,
+      },
+    ],
     'no-unused-vars': [ERROR, { args: 'none' }],
     'no-use-before-define': ERROR,
     'no-useless-call': ERROR,

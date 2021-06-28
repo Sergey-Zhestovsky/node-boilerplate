@@ -14,8 +14,12 @@ class Action {
     return this.id !== null;
   }
 
-  synchronize({ id }) {
-    this.id = id;
+  /**
+   * @param {{ id: string } | string} id
+   */
+  synchronize(id) {
+    if (id instanceof Object) this.id = id.id;
+    else this.id = id;
   }
 }
 

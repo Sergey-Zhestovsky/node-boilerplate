@@ -10,13 +10,22 @@ const env = require('../data/env.json');
 
 const validateVariables = (configPath) => {
   if (configPath === undefined) {
-    if (process.env.NODE_ENV === undefined || process.env.NODE_ENV === null) {
-      process.env.NODE_ENV = env.DEVELOPMENT;
-    }
+    process.env.NODE_ENV ?? (process.env.NODE_ENV = env.DEVELOPMENT);
 
-    if (process.env.NODE_ENV === env.DEVELOPMENT) configPath = `.env.development`;
-    if (process.env.NODE_ENV === env.PRODUCTION) configPath = `.env.production`;
-    if (process.env.NODE_ENV === env.TEST) configPath = `.env.test`;
+    switch (process.env.NODE_ENV) {
+      case env.PRODUCTION:
+        configPath = `.env.production`;
+        break;
+
+      case env.TEST:
+        configPath = `.env.test`;
+        break;
+
+      case env.DEVELOPMENT:
+      default:
+        configPath = `.env.development`;
+        break;
+    }
   }
 
   dotenv.config({ path: `${configPath}.local` });

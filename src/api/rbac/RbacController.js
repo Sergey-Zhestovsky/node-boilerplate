@@ -15,7 +15,7 @@ class RbacController {
 
     this.permissionStrategies = new PermissionStrategies(this);
 
-    this.initiated = false;
+    this.initialized = false;
     this.synchronized = false;
   }
 
@@ -35,7 +35,7 @@ class RbacController {
     this.root = rootRole;
     this.roles = roles;
     this.actions = actions;
-    this.initialize = true;
+    this.initialized = true;
   }
 
   async synchronize() {
